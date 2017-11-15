@@ -1,3 +1,5 @@
+import subprocess
+
 # Basic Quadratic Sieve Function 
 # Works for small numbers
 
@@ -27,5 +29,30 @@ def basicQuadraticSieve( N ):
 						b = a
 						a = c
 						
+# Testing code
+# basicQuadraticSieve(457 * 673)
 
-basicQuadraticSieve(9613 * 8237)
+# Add parameters later for matrix input 
+def createMatrixInput ():
+	# Matrix Dimensions with dummy values
+	M = 10
+	N = 10
+
+	# Matrix to
+	matrix = [ [ (x-y) % 2 for x in range(M) ] for y in range(N) ]
+	print(str(matrix))
+	line1 = [ 0, 1, 2, 3, 4 ]
+	file  = open("matrixInput.txt", "w")
+
+	file.write(str(M) + " " + str(N) + "\n")
+	for line in matrix:
+		for item in line:
+			file.write( "%s "  % item )
+		file.write("\n")
+	file.close()
+	return
+
+createMatrixInput()
+
+def GaussianElimination ( filename ):
+	
