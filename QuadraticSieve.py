@@ -39,7 +39,7 @@ def createMatrixInput ():
 	N = 10
 
 	# Matrix to
-	matrix = [ [ (x-y) % 2 for x in range(M) ] for y in range(N) ]
+	matrix = [ [ (x+y) % 2 for x in range(M) ] for y in range(N) ]
 	print(str(matrix))
 	line1 = [ 0, 1, 2, 3, 4 ]
 	file  = open("matrixInput.txt", "w")
@@ -56,7 +56,7 @@ def createMatrixInput ():
 
 def GaussianElimination ():
 	print("\n\n\n")
-	args = ["~/Desktop/EDIN01/Project1/GaussBin.exe", "matrixInput.txt", "matrixOutput.txt"]
+	args = ["./a.out ./matrixInput.txt ./matrixOutput.txt"]
 	subprocess.call( args, shell=True )
 	return
 
