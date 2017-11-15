@@ -52,7 +52,13 @@ def createMatrixInput ():
 	file.close()
 	return
 
-createMatrixInput()
 
-def GaussianElimination ( filename ):
-	
+
+def GaussianElimination ():
+	print("\n\n\n")
+	args = ["~/Desktop/EDIN01/Project1/GaussBin.exe", "matrixInput.txt", "matrixOutput.txt"]
+	subprocess.call( args, shell=True )
+	return
+
+createMatrixInput()
+GaussianElimination()
