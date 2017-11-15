@@ -1,4 +1,5 @@
 import subprocess
+from random import *
 
 # Basic Quadratic Sieve Function 
 # Works for small numbers
@@ -13,9 +14,13 @@ def basicQuadraticSieve( N ):
 					a = x+y
 					b = N
 
+					# Debugging code 
+					"""
 					print('initials')
 					print (a)
 					print (b)
+					"""
+
 					# Gets the gcd of N and x+y
 					while ( 1 ):
 						# Gets q given p which is gcd.
@@ -33,32 +38,62 @@ def basicQuadraticSieve( N ):
 # basicQuadraticSieve(457 * 673)
 
 # Add parameters later for matrix input 
-def createMatrixInput ():
+def createMatrixInput ( matrix ):
 	# Matrix Dimensions with dummy values
 	M = 10
-	N = 10
+	N = 15
 
-	# Matrix to
-	matrix = [ [ (x+y) % 2 for x in range(M) ] for y in range(N) ]
-	print(str(matrix))
+	# Test matrix
+
+	matrix2 = generateRNG(M,N)
+	
 	line1 = [ 0, 1, 2, 3, 4 ]
 	file  = open("matrixInput.txt", "w")
 
 	file.write(str(M) + " " + str(N) + "\n")
-	for line in matrix:
+	for line in matrix2:
 		for item in line:
-			file.write( "%s "  % item )
+			if (item == 0 ):
+				file.write( "%s "  % 1)
+			else:
+				file.write( str(0) + " " )
 		file.write("\n")
 	file.close()
+	print("matrixInput.txt:")
+	subprocess.call("cat matrixInput.txt", shell=True)
+	print("\n")
+
+	return
+
+# Generates a random matrix for testing
+def generateRNG (M, N):
+	seed(256)
+	matrix = [ [ randint(0, 1) for x in range(M) ] for y in range(N) ]
+	return matrix
+
+# reads in the output file from GaussBin
+def readMatrixOutput ():
+
+	#
+	filename="matrixOutput.txt"
+	file = open(filename, "r")
+
+	dimensions=file.readline(1) 
+
+	dim = dimensions.split()
+	print(dim)
 	return
 
 
-
+# Wrapper for the GaussBin program
 def GaussianElimination ():
-	print("\n\n\n")
 	args = ["./a.out ./matrixInput.txt ./matrixOutput.txt"]
 	subprocess.call( args, shell=True )
+	print("matrixOutput.txt")
+	subprocess.call( ["cat", "matrixOutput.txt"])
 	return
 
-createMatrixInput()
+# Testing function calls
+# readMatrixOutput();
+createMatrixInput([1])
 GaussianElimination()
