@@ -10,6 +10,11 @@ factorBase = []
 rValues = []
 rFactors = []
 
+# helper method to print matrix in readable way
+def printMatrix(matrix):
+    for row in matrix:
+        print(' '.join(map(str,row)))
+
 def readFile(s, n):
     # parsing file for primes up to n
     file = open(s)
@@ -140,25 +145,23 @@ def readMatrixOutput ():
 	filename="matrixOutput.txt"
 	file = open(filename, "r")
 
-	# dimensions=file.readline()
-	# dim = dimensions.split()
+	dimensions=file.readline()
+	dim = dimensions.split()
 	
 	# read single line of matrix output
-	file.readline()
-	strMatrix = file.readline().split()
-	matrix = [int(i) for i in strMatrix]
+	# file.readline()
+	# strMatrix = file.readline().split()
+	# matrix = [int(i) for i in strMatrix]
 	
 	""" print matrix dimensions
 	print("M: %s \n" % dim[0])
 	print("N: %s" % dim[1])
 	"""
-
-	# for reading input file
 	# print("readMatrixOutput: \n")
-	# strMatrix = [ file.readline().split()  for i in range( int(dim[1])) ] 
+	strMatrix = [ file.readline().split()  for i in range( int(dim[0])) ] 
 	# for i in strMatrix:
 	# 	print(i)
-	# matrix = [ [int(i) for i in line] for line in strMatrix] 
+	matrix = [ [int(i) for i in line] for line in strMatrix] 
 
 	""" Print input matrix
 	for line in matrix:
@@ -183,11 +186,12 @@ N=10
 # matrix = generateRNG(M, N)
 # createMatrixInput(matrix)
 matrix = createMatrix()
-print(matrix)
-print()
+# printMatrix(matrix)
+# print()
+createMatrixInput(matrix)
 GaussianElimination()
-matrix2 = readMatrixOutput()bnb
-print(matrix2)
+matrix2 = readMatrixOutput()
+printMatrix(matrix2)
 # for i in range(M):
 # 	if ( matrix[i] != matrix2[i]):
 # 		print("Original matrix: \n")
