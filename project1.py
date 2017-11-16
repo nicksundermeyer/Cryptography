@@ -2,9 +2,9 @@ import math
 import random
 import subprocess
 
-N = 307561
+N = 31741649
 # Number of primes we are bounded by
-B = 10
+B = 1000
 L = 10
 
 factorBase = []
