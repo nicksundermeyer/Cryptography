@@ -3,6 +3,7 @@ import random
 import subprocess
 
 N = 16637
+# Number of primes we are bounded by
 B = 10
 L = 12
 
@@ -43,6 +44,7 @@ primes = readFile("prim_2_24.txt", N)
 
 # creating matrix of 1s and 0s corresponding to primes up to B
 def createMatrix():
+	"""
 	# generating r values and placing in list
 	for j in range (0, L):
 		for k in range (0, L):
@@ -52,6 +54,13 @@ def createMatrix():
 			
 			if(bSmooth( modVal) ):
 				rValues.append(r)
+	"""
+
+	# Dummy Code to create the correct rFactors
+
+	for r in rValues:
+		modVal = (r * r) % N
+		bSmooth( modVal)
 
 	# creating matrix result
 	result = [[0 for x in range(B)] for x in range(B)]
@@ -60,6 +69,7 @@ def createMatrix():
 	for x in range(B):
 		for y in range(B):
 			# print(str(primes[y]) + " " + str(rFactors[y]) + " " + str(primes[y] in rFactors[y]))
+			# print("x: %s, y: %s" % (x, y))
 			if(primes[y] in rFactors[x]):
 				# print(str(x) + " " + str(y))
 				result[x][y] = 1
@@ -71,7 +81,7 @@ def primeFactor(n):
 	result = []
 
 	# Tests factorization
-	# print("primes: %s" % n)
+	# print("prime: %s" % n)
 
 	if (n == 0):
 		return result
@@ -79,18 +89,20 @@ def primeFactor(n):
 		while(n % p == 0):
 			n = n / p
 			result.append(p)
+
 			if (n <= 1):
 				break
 
 	# Tests factorization
 	# print("factors: %s \n" % result)
-
 	return result
 
 # decide if number is b-smooth
 def bSmooth(n):
 	factor = primeFactor(n)
-	if(max(factor, default=0) < B):
+	print("prime: %s" % n)
+	print("factors: %s" % factor)
+	if(max(factor, default=0) < primes[B] ) :
 		rFactors.append(factor)
 		return True
 	else:
@@ -211,10 +223,12 @@ def GaussianElimination ():
 def createSystem (systems, indicator):
 	# printMatrix(systems)
 	for prime in systems:
-		"""
+"""
+"""
 		print("prime:")
 		print(prime)
-		"""
+"""
+"""
 		# print(inversePrime(prime))
 
 # Convert a matrix row to a 
@@ -273,8 +287,9 @@ def createX(matrix, matrix2):
 # createMatrixInput(matrix)
 
 # Create matrix of factored numbers.
-matrix = createMatrix()
 rValues = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
+matrix = createMatrix()
+
 
 # printMatrix(matrix)
 # print()
@@ -292,7 +307,7 @@ printMatrix(matrix)
 print()
 printMatrix(matrix2)
 
-createSystem(matrix, matrix2)
+# createSystem(matrix, matrix2)
 
 
 
