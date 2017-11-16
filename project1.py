@@ -172,7 +172,14 @@ def readMatrixOutput ():
 
 # Wrapper for the GaussBin program
 def GaussianElimination ():
+
+	""" Testing code """
+	args = ["./a.out ./example.txt ./matrixOutput.txt"]
+
+
+	""" Final code
 	args = ["./a.out ./matrixInput.txt ./matrixOutput.txt"]
+	"""
 	subprocess.call( args, shell=True )
 	""" Debug code
 	print("matrixOutput.txt")
@@ -185,13 +192,25 @@ M=10
 N=10
 # matrix = generateRNG(M, N)
 # createMatrixInput(matrix)
+
+# Create matrix of factored numbers.
 matrix = createMatrix()
+
+
 # printMatrix(matrix)
 # print()
+
+# Creates input file for GaussBin
 createMatrixInput(matrix)
+
+# Runs Gauss Bin 
 GaussianElimination()
+
+# Reads the result of GaussBin
 matrix2 = readMatrixOutput()
-printMatrix(matrix2)
+
+# DEBUGGING Prints the result of GaussBin
+# printMatrix(matrix2)
 # for i in range(M):
 # 	if ( matrix[i] != matrix2[i]):
 # 		print("Original matrix: \n")
