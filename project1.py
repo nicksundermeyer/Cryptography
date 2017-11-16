@@ -2,10 +2,10 @@ import math
 import random
 import subprocess
 
-N = 17*19
+N = 307561
 # Number of primes we are bounded by
 B = 10
-L = 31
+L = 10
 
 factorBase = []
 rValues = []
@@ -46,7 +46,7 @@ primes = readFile("prim_2_24.txt", N)
 def createMatrix():
 
 	# generating r values and placing in list
-	c=1
+
 	for j in range (0, L):
 		for k in range (0, L):
 			r = math.floor(math.sqrt(k * N)) + j
@@ -63,7 +63,7 @@ def createMatrix():
 		bSmooth( modVal)
 	"""
 	# creating matrix result
-	result = [[0 for primes in range(B)] for rVals in range(len(rValues))]
+	result = [[0 for primes in range(min(len(primes),B))] for rVals in range(len(rValues))]
 	
 	# check which factors are primes, set bits in matrix for those primes
 	for x in range(len(rValues)):
@@ -131,7 +131,9 @@ def basicQuadraticSieve( N, x, y ):
 		# Gets the gcd of N and x+y
 		while ( 1 ):
 			# Gets q given p which is gcd.
-			if ( a == 0 ):
+			if ( a == 0):
+				if (b == 1 or b == N):
+					return False
 				p = b
 				q = int(N/b)
 				print ('p is ' + str(p) )
