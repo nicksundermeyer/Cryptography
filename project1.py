@@ -48,7 +48,9 @@ def createMatrix():
 		for k in range (0, L):
 			r = math.floor(math.sqrt(k * N)) + j
 
-			if(bSmooth(r)):
+			modVal = (r^2) % N
+			
+			if(bSmooth( modVal) ):
 				rValues.append(r)
 
 	# creating matrix result
@@ -66,20 +68,25 @@ def createMatrix():
 
 # trial division using list of primes to find prime factorization of number
 def primeFactor(n):
-    result = []
-    for p in primes:
-        if(n % p == 0):
-            result.append(p)
-    return result
+	result = []
+	print("primes: %s" % n)
+	for p in primes:
+		while(n % p == 0 and n != 0 ):
+			n = n / p
+			result.append(p)
+			if (n <= 1):
+				break
+	print("factors: %s \n" % result)
+	return result
 
 # decide if number is b-smooth
 def bSmooth(n):
-    factor = primeFactor(n)
-    if(max(factor, default=0) < B):
-        rFactors.append(factor)
-        return True
-    else:
-        return False
+	factor = primeFactor(n)
+	if(max(factor, default=0) < B):
+		rFactors.append(factor)
+		return True
+	else:
+		return False
 
 def basicQuadraticSieve( N ):
 	print(N)
@@ -228,9 +235,11 @@ def createX(matrix, matrix2):
 			if(line[i] == 1):
 				# print("prime: " + str(i) + ": " + str(primes[i]))
 				x *= primes[i]
-		print(x)
+		# print(x)
 
 		# Calculate gcd, if it's correct then return, otherwise continue the loop
+
+
 
 
 # Testing function calls
@@ -263,6 +272,12 @@ createSystem(matrix, matrix2)
 # print(rValues)
 
 createX(matrix, matrix2)
+"""
+print("rValues:")
+print(rValues)
+print("rFactors")
+print(rFactors)
+"""
 
 # printMatrix(matrix2)
 
