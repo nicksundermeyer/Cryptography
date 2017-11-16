@@ -69,14 +69,22 @@ def createMatrix():
 # trial division using list of primes to find prime factorization of number
 def primeFactor(n):
 	result = []
-	print("primes: %s" % n)
+
+	# Tests factorization
+	# print("primes: %s" % n)
+
+	if (n == 0):
+		return result
 	for p in primes:
-		while(n % p == 0 and n != 0 ):
+		while(n % p == 0):
 			n = n / p
 			result.append(p)
 			if (n <= 1):
 				break
-	print("factors: %s \n" % result)
+
+	# Tests factorization
+	# print("factors: %s \n" % result)
+
 	return result
 
 # decide if number is b-smooth
@@ -88,33 +96,31 @@ def bSmooth(n):
 	else:
 		return False
 
-def basicQuadraticSieve( N ):
-	print(N)
-	for x in range(1, N):
-		for y in range(1, N):
-			if ( (x * x) == ( (y * y) % N) and x != y): 
-					a = x+y
-					b = N
+def basicQuadraticSieve( N, x, y ):
+	
+	if ( (x * x) == ( (y * y) % N) and x != y): 
+		a = x+y
+		b = N
 
-					# Debugging code 
-					"""
-					print('initials')
-					print (a)
-					print (b)
-					"""
+		# Debugging code 
+		"""
+		print('initials')
+		print (a)
+		print (b)
+		"""
 
-					# Gets the gcd of N and x+y
-					while ( 1 ):
-						# Gets q given p which is gcd.
-						if ( a == 0 ):
-							p = b
-							q = N/b
-							print ('p is ' + str(p) )
-							print ('q is ' + str(q) )
-							return
-						c = b % a
-						b = a
-						a = c
+		# Gets the gcd of N and x+y
+		while ( 1 ):
+			# Gets q given p which is gcd.
+			if ( a == 0 ):
+				p = b
+				q = N/b
+				print ('p is ' + str(p) )
+				print ('q is ' + str(q) )
+				return
+			c = b % a
+			b = a
+			a = c
 						
 # Testing code
 # basicQuadraticSieve(457 * 673)
@@ -228,13 +234,28 @@ def inversePrime (row):
 
 def createX(matrix, matrix2):
 	running = True
-	x = 1
+	
+	#Check each solution
 	for line in matrix2:
+
+		# r values unmodded
+		rVal = 1
+		# r values modded
+		rModTotal = 1
+
 		# print(line)
+		# Multiply by each number specified
 		for i in range(0, len(line)):
 			if(line[i] == 1):
 				# print("prime: " + str(i) + ": " + str(primes[i]))
-				x *= primes[i]
+				rVal *= rValues[i]
+				
+				for factor in rFactors[i]:
+					rModTotal *= factor
+		print("Factor Test: ")
+		basicQuadraticSieve(N, rVal, rModTotal)
+
+
 		# print(x)
 
 		# Calculate gcd, if it's correct then return, otherwise continue the loop
