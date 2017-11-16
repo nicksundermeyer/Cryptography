@@ -40,18 +40,17 @@ def basicQuadraticSieve( N ):
 # Add parameters later for matrix input 
 def createMatrixInput ( matrix ):
 	# Matrix Dimensions with dummy values
-	M = 10
-	N = 15
 
 	# Test matrix
 
-	matrix2 = generateRNG(M,N)
-	
+	# matrix2 = generateRNG(M,N)
+	M=len(matrix)
+	N = len(matrix[0])
 	line1 = [ 0, 1, 2, 3, 4 ]
 	file  = open("matrixInput.txt", "w")
 
 	file.write(str(M) + " " + str(N) + "\n")
-	for line in matrix2:
+	for line in matrix:
 		for item in line:
 			if (item == 0 ):
 				file.write( "%s "  % 1)
@@ -59,9 +58,11 @@ def createMatrixInput ( matrix ):
 				file.write( str(0) + " " )
 		file.write("\n")
 	file.close()
+	""" Debugging for matrixInput creator
 	print("matrixInput.txt:")
 	subprocess.call("cat matrixInput.txt", shell=True)
 	print("\n")
+	"""
 
 	return
 
@@ -75,25 +76,51 @@ def generateRNG (M, N):
 def readMatrixOutput ():
 
 	#
-	filename="matrixOutput.txt"
+	filename="matrixInput.txt"
 	file = open(filename, "r")
 
-	dimensions=file.readline(1) 
-
+	dimensions=file.readline() 
 	dim = dimensions.split()
-	print(dim)
-	return
+	
+	""" print matrix dimensions
+	print("M: %s \n" % dim[0])
+	print("N: %s" % dim[1])
+	"""
+
+	print("readMatrixOutput: \n")
+	strMatrix = [ file.readline().split()  for i in range( int(dim[1])) ] 
+	for i in strMatrix:
+		print(i)
+	matrix = [ [int(i) for i in line] for line in strMatrix] 
+
+	""" Print input matrix
+	for line in matrix:
+		print("%s \n" % line)
+	"""
+
+	return matrix
 
 
 # Wrapper for the GaussBin program
 def GaussianElimination ():
 	args = ["./a.out ./matrixInput.txt ./matrixOutput.txt"]
 	subprocess.call( args, shell=True )
+	""" Debug code
 	print("matrixOutput.txt")
 	subprocess.call( ["cat", "matrixOutput.txt"])
+	"""
 	return
 
 # Testing function calls
-# readMatrixOutput();
-createMatrixInput([1])
+M=10
+N=10
+matrix = generateRNG(M, N)
+# createMatrixInput(matrix)
 GaussianElimination()
+matrix2 = readMatrixOutput()
+for i in range(M):
+	if ( matrix[i] != matrix2[i]):
+		print("Original matrix: \n")
+		print ("%s \n" % matrix[i])
+		print("readMatrixOutput: \n")
+		print ( "%s \n\n" % matrix2[i])
