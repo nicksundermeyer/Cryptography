@@ -204,6 +204,7 @@ def GaussianElimination ():
 	subprocess.call( ["cat", "matrixOutput.txt"])
 	"""
 	return
+""" Sebastian's Code
 # systems the actual r values we use to create an x^2 value
 # indicator equations from the system to actually use.
 # Dependency: Uses the global variable primes (first N primes)
@@ -230,7 +231,9 @@ def inversePrime (row):
 	print()
 	return primeNum
 
+"""
 
+""" Nick's Code - Working solution """
 
 def createX(matrix, matrix2):
 	running = True
