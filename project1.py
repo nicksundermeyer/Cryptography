@@ -63,17 +63,18 @@ def createMatrix():
 		bSmooth( modVal)
 
 	# creating matrix result
-	result = [[0 for x in range(B)] for x in range(B)]
-
+	result = [[0 for primes in range(B)] for rVals in range(len(rValues))]
+	
 	# check which factors are primes, set bits in matrix for those primes
-	for x in range(B):
+	for x in range(len(rValues)):
 		for y in range(B):
 			# print(str(primes[y]) + " " + str(rFactors[y]) + " " + str(primes[y] in rFactors[y]))
 			# print("x: %s, y: %s" % (x, y))
 			if(primes[y] in rFactors[x]):
 				# print(str(x) + " " + str(y))
 				result[x][y] = 1
-	
+
+	printMatrix(result)
 	return result
 
 # trial division using list of primes to find prime factorization of number
@@ -100,8 +101,10 @@ def primeFactor(n):
 # decide if number is b-smooth
 def bSmooth(n):
 	factor = primeFactor(n)
+	"""
 	print("prime: %s" % n)
 	print("factors: %s" % factor)
+	"""
 	if(max(factor, default=0) < primes[B] ) :
 		rFactors.append(factor)
 		return True
