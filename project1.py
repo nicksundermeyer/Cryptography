@@ -10,6 +10,12 @@ factorBase = []
 rValues = []
 rFactors = []
 
+# Filenames 
+# GaussBin input file
+inputFile = "./matrixInput.txt"
+descriptionExample = "./descriptionExample.txt"
+# GaussBin outputfile
+outputFile = "matrixOutput.txt"
 # helper method to print matrix in readable way
 def printMatrix(matrix):
     for row in matrix:
@@ -115,7 +121,7 @@ def createMatrixInput ( matrix ):
 	M=len(matrix)
 	N = len(matrix[0])
 	line1 = [ 0, 1, 2, 3, 4 ]
-	file  = open("matrixInput.txt", "w")
+	file  = open(inputFile, "w")
 
 	file.write(str(M) + " " + str(N) + "\n")
 	for line in matrix:
@@ -141,8 +147,7 @@ def generateRNG (M, N):
 	return matrix
 
 # reads in the output file from GaussBin
-def readMatrixOutput ():
-	filename="matrixOutput.txt"
+def readMatrixOutput (filename):
 	file = open(filename, "r")
 
 	dimensions=file.readline()
@@ -174,8 +179,7 @@ def readMatrixOutput ():
 def GaussianElimination ():
 
 	""" Testing code """
-	args = ["./a.out ./example.txt ./matrixOutput.txt"]
-
+	args = ["./a.out "+ descriptionExample + " " + outputFile]
 
 	""" Final code
 	args = ["./a.out ./matrixInput.txt ./matrixOutput.txt"]
@@ -186,6 +190,33 @@ def GaussianElimination ():
 	subprocess.call( ["cat", "matrixOutput.txt"])
 	"""
 	return
+# systems the actual r values we use to create an x^2 value
+# indicator equations from the system to actually use.
+# Dependency: Uses the global variable primes (first N primes)
+def createSystem (systems, indicator):
+	# printMatrix(systems)
+	for prime in systems:
+		"""
+		print("prime:")
+		print(prime)
+		"""
+		print(inversePrime(prime))
+
+# Convert a matrix row to a 
+def inversePrime (row):
+	primeNum=1
+	print("prime")
+	print(row)
+	for i in range(len(row)):
+		if(row[i] == 1):
+			
+			print("prime %s: %s" % (i, primes[i]))
+			
+			primeNum = primeNum * primes[i]
+	print()
+	return primeNum
+
+
 
 # Testing function calls
 M=10
@@ -207,7 +238,13 @@ createMatrixInput(matrix)
 GaussianElimination()
 
 # Reads the result of GaussBin
-matrix2 = readMatrixOutput()
+matrix = readMatrixOutput(descriptionExample)
+matrix2 = readMatrixOutput(outputFile)
+
+
+createSystem(matrix, matrix2)
+
+
 
 # DEBUGGING Prints the result of GaussBin
 # printMatrix(matrix2)
