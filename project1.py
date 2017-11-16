@@ -2,7 +2,7 @@ import math
 import random
 import subprocess
 
-N = 307561
+N = 17*19
 # Number of primes we are bounded by
 B = 10
 L = 10
@@ -63,19 +63,29 @@ def createMatrix():
 		bSmooth( modVal)
 	"""
 	# creating matrix result
-	result = [[0 for primes in range(min(len(primes),B))] for rVals in range(len(rValues))]
+	result = []
 	
 	# check which factors are primes, set bits in matrix for those primes
 	for x in range(len(rValues)):
+		row = [0 for primes in range(min(len(primes),B))]
 		for y in range(B):
-			# print(str(primes[y]) + " " + str(rFactors[y]) + " " + str(primes[y] in rFactors[y]))
-			# print("x: %s, y: %s" % (x, y))
-			# print ("factor: %s %s" %(primes[y], rFactors[x]) ) 
 			if(primes[y] in rFactors[x]):
-				# Very inefficient function below 
+				row[y] = (rFactors[x].count(primes[y]) % 2 )
 
-				# print(str(x) + " " + str(y))
-				result[x][y] = (rFactors[x].count(primes[y]) % 2 )
+		if not row in result:
+			result.append(row)
+				
+
+	# for x in range(len(rValues)):
+	# 	for y in range(B):
+	# 		# print(str(primes[y]) + " " + str(rFactors[y]) + " " + str(primes[y] in rFactors[y]))
+	# 		# print("x: %s, y: %s" % (x, y))
+	# 		# print ("factor: %s %s" %(primes[y], rFactors[x]) ) 
+	# 		if(primes[y] in rFactors[x]):
+	# 			# Very inefficient function below 
+
+	# 			# print(str(x) + " " + str(y))
+	# 			result[x][y] = (rFactors[x].count(primes[y]) % 2 )
 	"""Debugging code
 	print("result matrix: ")
 	printMatrix(result)
@@ -278,8 +288,8 @@ def createX(matrix, matrix2):
 				#print(rFactors[i])
 				for factor in rFactors[i]:
 					rModTotal *= factor	
-		print(rVal % N)
-		print(int(math.sqrt(rModTotal) % N))
+		# print(rVal % N)
+		# print(int(math.sqrt(rModTotal) % N))
 		if (basicQuadraticSieve(N, rVal, int(math.sqrt(rModTotal) % N) )):
 			return
 
