@@ -74,24 +74,28 @@ def generateRNG (M, N):
 
 # reads in the output file from GaussBin
 def readMatrixOutput ():
-
-	#
-	filename="matrixInput.txt"
+	filename="matrixOutput.txt"
 	file = open(filename, "r")
 
-	dimensions=file.readline() 
-	dim = dimensions.split()
+	# dimensions=file.readline()
+	# dim = dimensions.split()
+	
+	# read single line of matrix output
+	file.readline()
+	strMatrix = file.readline().split()
+	matrix = [int(i) for i in strMatrix]
 	
 	""" print matrix dimensions
 	print("M: %s \n" % dim[0])
 	print("N: %s" % dim[1])
 	"""
 
-	print("readMatrixOutput: \n")
-	strMatrix = [ file.readline().split()  for i in range( int(dim[1])) ] 
-	for i in strMatrix:
-		print(i)
-	matrix = [ [int(i) for i in line] for line in strMatrix] 
+	# for reading input file
+	# print("readMatrixOutput: \n")
+	# strMatrix = [ file.readline().split()  for i in range( int(dim[1])) ] 
+	# for i in strMatrix:
+	# 	print(i)
+	# matrix = [ [int(i) for i in line] for line in strMatrix] 
 
 	""" Print input matrix
 	for line in matrix:
@@ -118,9 +122,9 @@ matrix = generateRNG(M, N)
 # createMatrixInput(matrix)
 GaussianElimination()
 matrix2 = readMatrixOutput()
-for i in range(M):
-	if ( matrix[i] != matrix2[i]):
-		print("Original matrix: \n")
-		print ("%s \n" % matrix[i])
-		print("readMatrixOutput: \n")
-		print ( "%s \n\n" % matrix2[i])
+# for i in range(M):
+# 	if ( matrix[i] != matrix2[i]):
+# 		print("Original matrix: \n")
+# 		print ("%s \n" % matrix[i])
+# 		print("readMatrixOutput: \n")
+# 		print ( "%s \n\n" % matrix2[i])
