@@ -2,10 +2,10 @@ import math
 import random
 import subprocess
 
-N = 16637
+N = 17*19
 # Number of primes we are bounded by
 B = 10
-L = 12
+L = 31
 
 factorBase = []
 rValues = []
@@ -44,24 +44,24 @@ primes = readFile("prim_2_24.txt", N)
 
 # creating matrix of 1s and 0s corresponding to primes up to B
 def createMatrix():
-	"""
+
 	# generating r values and placing in list
+	c=1
 	for j in range (0, L):
 		for k in range (0, L):
 			r = math.floor(math.sqrt(k * N)) + j
 
-			modVal = (r^2) % N
+			modVal = (r * r) % N
 			
 			if(bSmooth( modVal) ):
 				rValues.append(r)
-	"""
 
 	# Dummy Code to create the correct rFactors
-
+	"""
 	for r in rValues:
 		modVal = (r * r) % N
 		bSmooth( modVal)
-
+	"""
 	# creating matrix result
 	result = [[0 for primes in range(B)] for rVals in range(len(rValues))]
 	
@@ -76,8 +76,10 @@ def createMatrix():
 
 				# print(str(x) + " " + str(y))
 				result[x][y] = (rFactors[x].count(primes[y]) % 2 )
+	"""Debugging code
 	print("result matrix: ")
 	printMatrix(result)
+	"""
 	return result
 
 # trial division using list of primes to find prime factorization of number
@@ -85,7 +87,7 @@ def primeFactor(n):
 	result = []
 
 	# Tests factorization
-	print("prime: %s" % n)
+	# print("prime: %s" % n)
 
 	if (n == 0):
 		return result
@@ -98,7 +100,7 @@ def primeFactor(n):
 				break
 
 	# Tests factorization
-	print("factors: %s \n" % result)
+	# print("factors: %s \n" % result)
 	return result
 
 # decide if number is b-smooth
@@ -115,9 +117,7 @@ def bSmooth(n):
 		return False
 
 def basicQuadraticSieve( N, x, y ):
-	print("basic")
-	print(x * x)
-	print( (y * y) % N)
+
 	if ( ((x * x) % N) == ( (y * y) % N) and x != y): 
 		a = x+y
 		b = N
@@ -133,14 +133,14 @@ def basicQuadraticSieve( N, x, y ):
 			# Gets q given p which is gcd.
 			if ( a == 0 ):
 				p = b
-				q = N/b
+				q = int(N/b)
 				print ('p is ' + str(p) )
 				print ('q is ' + str(q) )
-				return
+				return True
 			c = b % a
 			b = a
 			a = c
-	return
+	return False
 						
 # Testing code
 # basicQuadraticSieve(457 * 673)
@@ -278,14 +278,13 @@ def createX(matrix, matrix2):
 					rModTotal *= factor	
 		print(rVal % N)
 		print(int(math.sqrt(rModTotal) % N))
-		basicQuadraticSieve(N, rVal, int(math.sqrt(rModTotal) % N) )
+		if (basicQuadraticSieve(N, rVal, int(math.sqrt(rModTotal) % N) )):
+			return
 
 
 		# print(x)
 
 		# Calculate gcd, if it's correct then return, otherwise continue the loop
-
-
 
 
 # Testing function calls
@@ -295,7 +294,7 @@ def createX(matrix, matrix2):
 # createMatrixInput(matrix)
 
 # Create matrix of factored numbers.
-rValues = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
+# rValues = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
 matrix = createMatrix()
 
 
