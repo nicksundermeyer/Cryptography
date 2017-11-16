@@ -193,11 +193,11 @@ def readMatrixOutput (filename):
 def GaussianElimination ():
 
 	""" Testing code """
-	args = ["./a.out "+ descriptionExample + " " + outputFile]
+	# args = ["./a.out "+ descriptionExample + " " + outputFile]
 
-	""" Final code
+	""" Final code """
 	args = ["./a.out ./matrixInput.txt ./matrixOutput.txt"]
-	"""
+
 	subprocess.call( args, shell=True )
 	""" Debug code
 	print("matrixOutput.txt")
@@ -215,20 +215,20 @@ def createSystem (systems, indicator):
 		print("prime:")
 		print(prime)
 		"""
-		print(inversePrime(prime))
+		# print(inversePrime(prime))
 
 # Convert a matrix row to a 
 def inversePrime (row):
 	primeNum=1
-	print("prime")
-	print(row)
+	# print("prime")
+	# print(row)
 	for i in range(len(row)):
 		if(row[i] == 1):
 			
-			print("prime %s: %s" % (i, primes[i]))
+			# print("prime %s: %s" % (i, primes[i]))
 			
 			primeNum = primeNum * primes[i]
-	print()
+	# print()
 	return primeNum
 
 """
@@ -274,6 +274,7 @@ def createX(matrix, matrix2):
 
 # Create matrix of factored numbers.
 matrix = createMatrix()
+rValues = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
 
 # printMatrix(matrix)
 # print()
@@ -285,9 +286,11 @@ createMatrixInput(matrix)
 GaussianElimination()
 
 # Reads the result of GaussBin
-matrix = readMatrixOutput(descriptionExample)
+matrix = readMatrixOutput(inputFile)
 matrix2 = readMatrixOutput(outputFile)
-
+printMatrix(matrix)
+print()
+printMatrix(matrix2)
 
 createSystem(matrix, matrix2)
 
