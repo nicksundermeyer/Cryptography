@@ -70,10 +70,13 @@ def createMatrix():
 		for y in range(B):
 			# print(str(primes[y]) + " " + str(rFactors[y]) + " " + str(primes[y] in rFactors[y]))
 			# print("x: %s, y: %s" % (x, y))
+			# print ("factor: %s %s" %(primes[y], rFactors[x]) ) 
 			if(primes[y] in rFactors[x]):
-				# print(str(x) + " " + str(y))
-				result[x][y] = 1
+				# Very inefficient function below 
 
+				# print(str(x) + " " + str(y))
+				result[x][y] = (rFactors[x].count(primes[y]) % 2 )
+	print("result matrix: ")
 	printMatrix(result)
 	return result
 
@@ -82,7 +85,7 @@ def primeFactor(n):
 	result = []
 
 	# Tests factorization
-	# print("prime: %s" % n)
+	print("prime: %s" % n)
 
 	if (n == 0):
 		return result
@@ -95,7 +98,7 @@ def primeFactor(n):
 				break
 
 	# Tests factorization
-	# print("factors: %s \n" % result)
+	print("factors: %s \n" % result)
 	return result
 
 # decide if number is b-smooth
@@ -112,11 +115,12 @@ def bSmooth(n):
 		return False
 
 def basicQuadraticSieve( N, x, y ):
-	
-	if ( (x * x) == ( (y * y) % N) and x != y): 
+	print("basic")
+	print(x * x)
+	print( (y * y) % N)
+	if ( ((x * x) % N) == ( (y * y) % N) and x != y): 
 		a = x+y
 		b = N
-
 		# Debugging code 
 		"""
 		print('initials')
@@ -136,6 +140,7 @@ def basicQuadraticSieve( N, x, y ):
 			c = b % a
 			b = a
 			a = c
+	return
 						
 # Testing code
 # basicQuadraticSieve(457 * 673)
@@ -149,16 +154,15 @@ def createMatrixInput ( matrix ):
 	# matrix2 = generateRNG(M,N)
 	M=len(matrix)
 	N = len(matrix[0])
-	line1 = [ 0, 1, 2, 3, 4 ]
 	file  = open(inputFile, "w")
 
 	file.write(str(M) + " " + str(N) + "\n")
 	for line in matrix:
 		for item in line:
 			if (item == 0 ):
-				file.write( "%s "  % 1)
+				file.write( "%s "  % 0)
 			else:
-				file.write( str(0) + " " )
+				file.write( "%s "  % 1)
 		file.write("\n")
 	file.close()
 	""" Debugging for matrixInput creator
@@ -269,11 +273,12 @@ def createX(matrix, matrix2):
 			if(line[i] == 1):
 				# print("prime: " + str(i) + ": " + str(primes[i]))
 				rVal *= rValues[i]
-				
+				#print(rFactors[i])
 				for factor in rFactors[i]:
-					rModTotal *= factor
-		print("Factor Test: ")
-		basicQuadraticSieve(N, rVal, rModTotal)
+					rModTotal *= factor	
+		print(rVal % N)
+		print(int(math.sqrt(rModTotal) % N))
+		basicQuadraticSieve(N, rVal, int(math.sqrt(rModTotal) % N) )
 
 
 		# print(x)
@@ -306,9 +311,14 @@ GaussianElimination()
 # Reads the result of GaussBin
 matrix = readMatrixOutput(inputFile)
 matrix2 = readMatrixOutput(outputFile)
+
+"""
+#Debugging code
+print("matrix")
 printMatrix(matrix)
-print()
+print("matrix2")
 printMatrix(matrix2)
+"""
 
 # createSystem(matrix, matrix2)
 
