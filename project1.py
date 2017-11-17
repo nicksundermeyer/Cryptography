@@ -2,17 +2,17 @@ import math
 import random
 import subprocess
 from decimal import *
+from tqdm import tqdm
 
-
-N = 392742364277
+N = 184208651242126473140033
 
 
 # Number of primes we are bounded by
-B =300
+B =150
 
-L = 1000
+L = 100
 # Number of solutions to have
-Lvals = 300
+Lvals = 155
 
 testR = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
 
@@ -75,7 +75,6 @@ def createMatrix():
 			
 			# make factors
 			dFactor = primeFactor(modVal)
-			return
 
 			if (modVal == 0):
 				continue
@@ -89,7 +88,7 @@ def createMatrix():
 					if(primes[col] == factor[i]):
 						row[col] = power[i] % 2
 
-			if(bSmooth(factor) and (not tuple(row) in r_dict) ):
+			if(bSmooth(modVal) and (not tuple(row) in r_dict) ):
 				binMatrix.append(row)
 				row = tuple(row)
 
@@ -147,11 +146,11 @@ def createMatrix():
 def primeFactor(n):
 	result = []
 	result2 = []
-	print(n)
+	# print(n)
 	if (n == 0):
 		return result
 	for p in primes:
-		print(p)
+		# print(p)
 		while(n % p == 0):
 			n = n / p
 			
@@ -163,18 +162,41 @@ def primeFactor(n):
 
 			if (n <= 1):
 				break
-	print(result)
-	print(result2)
+	# print(result)
+	# print(result2)
 	return [result, result2]
 
+def primeFactorUnique(n):
+	result = []
+
+	if (n == 0):
+		return result
+	for p in primes:
+		while(n % p == 0):
+			n = n / p
+			result.append(p)
+
+			if (n <= 1):
+				break
+
+	return result
+
 # decide if number is b-smooth
-def bSmooth(factor):
-	
-	
-	if(max(factor, default=0) < primes[len(primes)-1] ) :
-		return True
-	else:
+def bSmooth(n):
+	result = []
+
+	if (n == 0):
 		return False
+	for p in primes:
+		while(n % p == 0):
+			n = n / p
+			result.append(p)
+
+			if (n <= 1):
+				# print("true")
+				return True
+	# print("false")
+	return False
 
 def basicQuadraticSieve( N, xSqu, ySqu ):
 	getcontext().prec = 2000
@@ -323,15 +345,15 @@ def createX(matrix, matrix2):
 
 		#print(factorDict)
 		for key in factorDict:
-			print(factorDict[key]/2)
+			# print(factorDict[key]/2)
 			for i in range(int(math.floor(factorDict[key]/2))):
 				rModTotal *= key
 		if(rModHalf != (rModTotal* rModTotal)) :
-			print("die")
-			print(factorDict)
+			# print("die")
+			# print(factorDict)
 			return
-		else:
-			print("win")
+		# else:
+			# print("win")
 		#print(rModHalf % N)
 		#print((rModTotal * rModTotal) % N)
 
