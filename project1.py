@@ -3,6 +3,10 @@ import random
 import subprocess
 from decimal import *
 
+# Answers:
+# p is 388117391953
+# q is 474620965361
+
 N = 184208651242126473140033
 
 # Number of primes we are bounded by
