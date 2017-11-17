@@ -72,9 +72,10 @@ def createMatrix():
 				modVal = (r * r) % N
 				
 				# make factors
-				dFactor = sympy.ntheory.factorint(modVal)
+				dFactor = primeFactor(modVal)
 
-				factor = list(dFactor.keys())
+				factor = dFactor[0]
+				power = dFactor[1]
 
 				#make row
 				row = [0 for prime in range(len(primes))]
@@ -82,11 +83,11 @@ def createMatrix():
 					if(primes[col] in factor):
 						row[col] = factor.count(primes[col]) % 2
 
-				if(bSmooth(factor) and (not row in binMatrix) ):
+				if(bSmooth(factor) and (not tuple(row) in r_dict) ):
 					binMatrix.append(row)
 					row = tuple(row)
 
-					r_dict[row] = [r, modVal, dFactor]
+					r_dict[row] = [r, modVal, factor, power]
 	return binMatrix
 """
 # decide if number is b-smooth
@@ -130,19 +131,24 @@ def createMatrix():
 # trial division using list of primes to find prime factorization of number
 def primeFactor(n):
 	result = []
-
+	result2 = []
 
 	if (n == 0):
 		return result
 	for p in primes:
 		while(n % p == 0):
 			n = n / p
-			result.append(p)
+			
+			if p not in result:
+				result.append(p)
+				result2.append(1)
+			else:
+				result2[result.index(p)] += 1
 
 			if (n <= 1):
 				break
 
-	return result
+	return [result, result2]
 
 # decide if number is b-smooth
 def bSmooth(factor):
