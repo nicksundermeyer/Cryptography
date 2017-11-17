@@ -1,20 +1,26 @@
+
 import math
 import random
 import subprocess
 from decimal import *
-
+import sympy
 
 N = 457*673
 
 # Number of primes we are bounded by
-B = 1000
-L = 10000
+B = 256
+L = 251
 
-table = [] # table to hold j, k, r, and r^2modn values
 factorBase = []	#use set for factorbase when checking factors, faster checking time
+
+# dictionary
+# keys are lists representing lines in the input matrix (e.g. {1, 0, 0, 1, 0})
+# keys point to list which contains r-value and list of factors
+r_dict = dict()
+
 rValues = []
 rFactors = []
-binMatrix = []
+rBinary = []
 
 newRValues = []
 newRFactors = []
@@ -53,78 +59,6 @@ def readFile(s, n):
 # contains primes up to a certain number, for quickly calculating prime factorization
 primes = readFile("prim_2_24.txt", B)
 
-# creating matrix of 1s and 0s corresponding to primes up to B
-def createMatrix():
-
-	# generating r values and placing in list
-
-	for j in range (0, math.floor(math.sqrt(L))):
-		for k in range (0, math.floor(math.sqrt(L))):
-
-			if (len(rValues) > 1000 ):
-				break;
-
-			array = []
-			r = math.floor(math.sqrt(k * N)) + j
-			modVal = (r * r) % N
-			
-			# make factors
-			factor = primeFactor(n)
-
-			#make row
-
-			row = [0 for prime in range(len(primes))]
-			for col in range(len(primes)):
-				if(prime[col] in factor):
-					row[col] = factor.count(primes[col] % 2 )
-
-
-			if(bSmooth( modVal) and (not row in binMatrix)):
-				rValues.append(r)
-				rFactors.append(factor)
-				binMatrix.append(row)
-
-	# Dummy Code to create the correct rFactors
-	"""
-	for r in rValues:
-		modVal = (r * r) % N
-		bSmooth( modVal)
-	"""
-	# creating matrix result
-	result = []
-	"""
-	# check which factors are primes, set bits in matrix for those primes
-	for x in range(len(rValues)):
-		row = [0 for primes in range(len(primes))]
-		for y in range(len(primes)):
-			if(primes[y] in rFactors[x]):
-				row[y] = (rFactors[x].count(primes[y]) % 2 )
-
-		if not row in result:
-			result.append(row)
-			newRValues.append(x)
-			newRFactors.append(rFactors[x])
-	print("Number of Rs %s " % len(newRValues))
-	# print(len(newRFactors))
-	# print(len(result))
-	print("Size of factorbase %s " % len(primes))
-
-	# for x in range(len(rValues)):
-	# 	for y in range(B):
-	# 		# print(str(primes[y]) + " " + str(rFactors[y]) + " " + str(primes[y] in rFactors[y]))
-	# 		# print("x: %s, y: %s" % (x, y))
-	# 		# print ("factor: %s %s" %(primes[y], rFactors[x]) ) 
-	# 		if(primes[y] in rFactors[x]):
-	# 			# Very inefficient function below 
-
-	# 			# print(str(x) + " " + str(y))
-	# 			result[x][y] = (rFactors[x].count(primes[y]) % 2 )
-	"""Debugging code
-	print("result matrix: ")
-	printMatrix(result)
-	"""
-	return result
-
 # trial division using list of primes to find prime factorization of number
 def primeFactor(n):
 	result = []
@@ -134,7 +68,9 @@ def primeFactor(n):
 	for p in primes:
 		while(n % p == 0):
 			n = n / p
-			result.append(p)
+
+			if not p in result:
+				result.append(p)
 
 			if (n <= 1):
 				break
@@ -142,16 +78,39 @@ def primeFactor(n):
 	return result
 
 # decide if number is b-smooth
-def bSmooth(factor):
-	
-	"""
-	print("prime: %s" % n)
-	print("factors: %s" % factor)
-	"""
-	if(max(factor, default=0) < primes[len(primes)-1] ) :
+def bSmooth(number):
+	if(number == 1):
 		return True
-	else:
-		return False
+	for p in primes:
+		if(number % p == 0):
+			return bSmooth(number // p)
+	return False
+
+# creating matrix of 1s and 0s corresponding to primes up to B
+def createMatrix():
+
+	for k in range (2, B):
+		rootNK = int(math.sqrt(N * k))
+
+		for j in range (2, k):
+			
+			r = rootNK + j
+			modVal = (r * r) % N
+
+			if(bSmooth(modVal)):
+				factors = primeFactor(modVal)
+				
+				# find binary representation of factors
+				line = [0] * len(primes)
+
+				# for each prime factor, set that bit in the line to 1
+				for x in factors:
+					line[primes.index(x)] = 1
+
+				tLine = tuple(line)
+				if not tLine in r_dict:
+					r_dict[tLine] = [modVal, factors]
+
 
 def basicQuadraticSieve( N, x, y ):
 
