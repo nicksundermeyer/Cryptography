@@ -2,17 +2,15 @@ import math
 import random
 import subprocess
 from decimal import *
-from tqdm import tqdm
 
 N = 184208651242126473140033
 
-
 # Number of primes we are bounded by
-B =150
+B =700
 
-L = 100
+L = 1000
 # Number of solutions to have
-Lvals = 155
+Lvals = 700
 
 testR = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
 
@@ -166,36 +164,13 @@ def primeFactor(n):
 	# print(result2)
 	return [result, result2]
 
-def primeFactorUnique(n):
-	result = []
-
-	if (n == 0):
-		return result
-	for p in primes:
-		while(n % p == 0):
-			n = n / p
-			result.append(p)
-
-			if (n <= 1):
-				break
-
-	return result
-
 # decide if number is b-smooth
 def bSmooth(n):
-	result = []
-
-	if (n == 0):
-		return False
-	for p in primes:
-		while(n % p == 0):
-			n = n / p
-			result.append(p)
-
-			if (n <= 1):
-				# print("true")
-				return True
-	# print("false")
+	if (n == 1):
+		return True
+	for f in primes:
+		if (n % f == 0):
+			return bSmooth(n//f)
 	return False
 
 def basicQuadraticSieve( N, xSqu, ySqu ):
