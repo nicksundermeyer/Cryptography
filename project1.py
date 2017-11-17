@@ -2,7 +2,7 @@ import math
 import random
 import subprocess
 from decimal import *
-
+import sympy
 
 N = 392742364277
 
@@ -72,7 +72,9 @@ def createMatrix():
 				modVal = (r * r) % N
 				
 				# make factors
-				factor = primeFactor(modVal)
+				dFactor = sympy.ntheory.factorint(modVal)
+
+				factor = list(dFactor.keys())
 
 				#make row
 				row = [0 for prime in range(len(primes))]
@@ -84,7 +86,7 @@ def createMatrix():
 					binMatrix.append(row)
 					row = tuple(row)
 
-					r_dict[row] = [r, modVal, factor]
+					r_dict[row] = [r, modVal, dFactor]
 	return binMatrix
 """
 # decide if number is b-smooth
