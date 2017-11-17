@@ -163,8 +163,6 @@ def primeFactor(n):
 
 # decide if number is b-smooth
 def bSmooth(factor):
-	
-	
 	if(max(factor, default=0) < primes[len(primes)-1] ) :
 		return True
 	for p in primes:
