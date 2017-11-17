@@ -156,11 +156,13 @@ def basicQuadraticSieve( N, xSqu, ySqu ):
 	x = int(Decimal.sqrt(Decimal(xSqu)))
 	y = int(Decimal.sqrt(Decimal(ySqu)))
 
-	if ( ((xSqu) % N) == ( (ySqu) % N) and x != y): 
-	
+	if ( ((xSqu) % N) == ( (ySqu) % N)): 
+		if (x != y):
+			print("Problems")
+			return False
 		a = x+y
 		b = N
-
+		
 		# Gets the gcd of N and x+y
 		while ( 1 ):
 			# Gets q given p which is gcd.
@@ -240,6 +242,8 @@ def createX(matrix, matrix2):
 		rVal = 1
 		# r values modded
 		rModTotal = 1
+
+		rModHalf = 1
 
 		# Multiply by each number specified
 		
