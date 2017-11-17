@@ -9,15 +9,15 @@ from decimal import *
 
 # Running time: 135.16 seconds
 
-# N = 184208651242126473140033
-N = 392742364277
+N = 184208651242126473140033
+# N = 392742364277
 
 # Number of primes we are bounded by
-B =500
+B = 420
 
 L = 1000
 # Number of solutions to have
-Lvals = 505
+Lvals = 425
 
 # binary matrix
 binMatrix = []
