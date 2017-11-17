@@ -2,14 +2,19 @@ import math
 import random
 import subprocess
 
-N = 31741649
+
+N = 17*19
+
 # Number of primes we are bounded by
-B = 30
-L = 100
+B = 1000
+L = 1000
 
 factorBase = []
 rValues = []
 rFactors = []
+
+newRValues = []
+newRFactors = []
 
 # Filenames 
 # GaussBin input file
@@ -27,14 +32,16 @@ def readFile(s, n):
 	file = open(s)
 	result = []
 	parsing = True
+	primeCount = 0;
 	while(parsing):
 		line = file.readline().strip()
 		tmp = line.split(" ")
 		for i in tmp:
 			if(int(i) < n):
 				result.append(int(i))
+				primeCount = primeCount + 1
 			
-		if(int(tmp[0]) > n):
+		if(int(tmp[0]) > n or primeCount > 1000):
 			parsing = False
 	file.close()
 	return result
@@ -49,6 +56,10 @@ def createMatrix():
 
 	for j in range (0, L):
 		for k in range (0, L):
+
+			if (len(rValues) > 1000 ):
+				break;
+
 			r = math.floor(math.sqrt(k * N)) + j
 			modVal = (r * r) % N
 			
@@ -73,7 +84,12 @@ def createMatrix():
 
 		if not row in result:
 			result.append(row)
-				
+			newRValues.append(x)
+			newRFactors.append(rFactors[x])
+	print(len(newRValues))
+	print(len(newRFactors))
+	print(len(result))
+	print(len(primes	))
 
 	# for x in range(len(rValues)):
 	# 	for y in range(B):
@@ -286,7 +302,7 @@ def createX(matrix, matrix2):
 				rVal *= rValues[i]
 				#print(rFactors[i])
 				for factor in rFactors[i]:
-					rModTotal *= factor	
+					rModTotal = ((rModTotal * factor ) % N)	
 		# print(rVal % N)
 		# print(int(math.sqrt(rModTotal) % N))
 		if (basicQuadraticSieve(N, rVal, int(math.sqrt(rModTotal) % N) )):
@@ -308,7 +324,11 @@ def createX(matrix, matrix2):
 # rValues = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
 matrix = createMatrix()
 
+rValues=newRValues
+rFactors=newRFactors
 
+print(len(rValues))
+print(len(rFactors))
 # printMatrix(matrix)
 # print()
 
