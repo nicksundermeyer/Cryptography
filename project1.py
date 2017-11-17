@@ -4,7 +4,7 @@ import subprocess
 from decimal import *
 
 
-N = 17*19
+N = 392742364277
 
 # Number of primes we are bounded by
 B = 1000
@@ -61,11 +61,10 @@ primes = readFile("prim_2_24.txt", N)
 def createMatrix():
 
 	# generating r values and placing in list
-	print(primes)
 	for j in range (0, math.floor(Lvals)):
 			for k in range (j):
 
-				if (len(rValues) > Lvals ):
+				if (len(r_dict) > Lvals ):
 					return binMatrix
 
 				r = math.floor(math.sqrt(k * N)) + j
@@ -82,11 +81,10 @@ def createMatrix():
 						row[col] = factor.count(primes[col]) % 2
 
 				if(bSmooth(factor) and (not row in binMatrix) ):
-					#r_dict[row] = [r, modVal, factor]
-					rValues.append(r)
-					rFactors.append(factor)
-					rModValues.append(modVal)
 					binMatrix.append(row)
+					row = tuple(row)
+
+					r_dict[row] = [r, modVal, factor]
 	return binMatrix
 """
 # decide if number is b-smooth
@@ -153,10 +151,13 @@ def bSmooth(factor):
 	else:
 		return False
 
-def basicQuadraticSieve( N, x, y ):
+def basicQuadraticSieve( N, xSqu, ySqu ):
+	getcontext().prec = 2000
+	x = int(Decimal.sqrt(Decimal(xSqu)))
+	y = int(Decimal.sqrt(Decimal(ySqu)))
 
-	if ( ((x * x) % N) == ( (y * y) % N) and x != y): 
-
+	if ( ((xSqu) % N) == ( (ySqu) % N) and x != y): 
+	
 		a = x+y
 		b = N
 
@@ -229,7 +230,7 @@ def GaussianElimination ():
 
 """ Nick's Code - Working solution """
 
-def createX(matrix2):
+def createX(matrix, matrix2):
 	running = True
 	
 	#Check each solution
@@ -244,24 +245,24 @@ def createX(matrix2):
 		
 
 		for i in range(len(line)):
-			if(line[i] == 1):
-				rVal *= rValues[i]
 
-				rModTotal *= rModValues[i]
+			rArray = r_dict[tuple(matrix[i])]
+			if(line[i] == 1):
+				rVal *= rArray[0]
+
+				rModTotal *= rArray[1]
 			
 		
-		if (basicQuadraticSieve(N, rVal, 
-			int(Decimal.sqrt(Decimal(rModTotal))) % N )):
+		if (basicQuadraticSieve(N, rVal*rVal, rModTotal)):
 			return
 
 
 def proj1():
 	matrix = createMatrix()
 	createMatrixInput(matrix)
-	print(len(primes))
 	GaussianElimination()
 	matrix2 = readMatrixOutput(outputFile)
-	createX(matrix2)
+	createX(matrix,matrix2)
 	return
 
 proj1()
