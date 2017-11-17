@@ -7,14 +7,16 @@ from decimal import *
 # p is 388117391953
 # q is 474620965361
 
+# Running time: 148.16 seconds
+
 N = 184208651242126473140033
 
 # Number of primes we are bounded by
-B =700
+B =500
 
 L = 1000
 # Number of solutions to have
-Lvals = 700
+Lvals = 505
 
 testR = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
 
