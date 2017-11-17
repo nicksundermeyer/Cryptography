@@ -2,10 +2,10 @@ import math
 import random
 import subprocess
 
-N = 17*19
+N = 31741649
 # Number of primes we are bounded by
-B = 10
-L = 10
+B = 30
+L = 100
 
 factorBase = []
 rValues = []
@@ -40,7 +40,7 @@ def readFile(s, n):
 	return result
 
 # contains primes up to N, for calculating factorization of numbers
-primes = readFile("prim_2_24.txt", N)
+primes = readFile("prim_2_24.txt", 1000)
 
 # creating matrix of 1s and 0s corresponding to primes up to B
 def createMatrix():
@@ -50,7 +50,6 @@ def createMatrix():
 	for j in range (0, L):
 		for k in range (0, L):
 			r = math.floor(math.sqrt(k * N)) + j
-
 			modVal = (r * r) % N
 			
 			if(bSmooth( modVal) ):
