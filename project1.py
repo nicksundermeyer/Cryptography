@@ -3,27 +3,26 @@ import math
 import random
 import subprocess
 from decimal import *
-import sympy
 
-N = 457*673
+#N = 392742364277
+N = 7*11
 
 # Number of primes we are bounded by
-B = 256
-L = 251
+B =300
 
-factorBase = []	#use set for factorbase when checking factors, faster checking time
+L = 1000
+# Number of solutions to have
+Lvals = 300
 
-# dictionary
-# keys are lists representing lines in the input matrix (e.g. {1, 0, 0, 1, 0})
-# keys point to list which contains r-value and list of factors
-r_dict = dict()
+testR = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
 
 rValues = []
 rFactors = []
-rBinary = []
+rModValues=[]
+binMatrix = []
 
-newRValues = []
-newRFactors = []
+r_dict=dict()
+
 
 # Filenames 
 # GaussBin input file
@@ -44,39 +43,61 @@ def readFile(s, n):
 	parsing = True
 	
 	while(parsing):
-		tmp = file.readline().strip()
-		line = tmp.split(" ")
-
-		for i in line:
-			result.append(int(i))
-
-		if(len(result) > n):
+		line = file.readline().strip()
+		tmp = line.split(" ")
+		for i in tmp:
+			if(int(i) < n):
+				result.append(int(i))
+				primeCount = primeCount + 1
+		if(int(tmp[0]) > n or primeCount > B):
 			parsing = False
-
 	file.close()
-	return result
-
-# contains primes up to a certain number, for quickly calculating prime factorization
-primes = readFile("prim_2_24.txt", B)
-
-# trial division using list of primes to find prime factorization of number
-def primeFactor(n):
-	result = []
-
-	if (n == 0):
-		return result
-	for p in primes:
-		while(n % p == 0):
-			n = n / p
-
-			if not p in result:
-				result.append(p)
-
-			if (n <= 1):
-				break
 
 	return result
 
+# contains primes up to N, for calculating factorization of numbers
+primes = readFile("prim_2_24.txt", N)
+
+# creating matrix of 1s and 0s corresponding to primes up to B
+def createMatrix():
+
+	# generating r values and placing in list
+
+	for j in range (0, math.floor(Lvals)):
+		for k in range (math.floor(Lvals)):
+	#for i in range(len(testR)):
+			if (len(r_dict) > Lvals ):
+				return binMatrix
+			#r = testR[i]
+			r = math.floor(math.sqrt(k * N)) + j
+
+			modVal = (r * r) % N
+			
+			# make factors
+			dFactor = primeFactor(modVal)
+
+			if (modVal == 0):
+				continue
+			factor = dFactor[0]
+			power = dFactor[1]
+
+			#make row
+			row = [0 for prime in range(len(primes))]
+			for col in range(len(primes)):
+				for i in range(len(factor)):
+					if(primes[col] == factor[i]):
+						row[col] = power[i] % 2
+
+			if(bSmooth(factor) and (not tuple(row) in r_dict) ):
+				binMatrix.append(row)
+				row = tuple(row)
+
+				r_dict[row] = [r, modVal, factor, power]
+			#print(r_dict[tuple(binMatrix[i])])	
+			#printMatrix(binMatrix)
+			#print(len(primes))
+	return binMatrix
+"""
 # decide if number is b-smooth
 def bSmooth(number):
 	if(number == 1):
@@ -110,11 +131,89 @@ def createMatrix():
 				tLine = tuple(line)
 				if not tLine in r_dict:
 					r_dict[tLine] = [modVal, factors]
+"""
 
 
-def basicQuadraticSieve( N, x, y ):
 
-	if ( ((x * x) % N) == ( (y * y) % N) and x != y): 
+
+# contains primes up to a certain number, for quickly calculating prime factorization
+primes = readFile("prim_2_24.txt", B)
+
+# trial division using list of primes to find prime factorization of number
+def primeFactor(n):
+	result = []
+	result2 = []
+
+	if (n == 0):
+		return result
+	for p in primes:
+		while(n % p == 0):
+			n = n / p
+			
+			if p not in result:
+				result.append(p)
+				result2.append(1)
+			else:
+				result2[result.index(p)] += 1
+
+			if (n <= 1):
+				break
+
+	return [result, result2]
+
+# decide if number is b-smooth
+def bSmooth(factor):
+	
+	
+	if(max(factor, default=0) < primes[len(primes)-1] ) :
+		return True
+	for p in primes:
+		if(number % p == 0):
+			return bSmooth(number // p)
+	return False
+
+# creating matrix of 1s and 0s corresponding to primes up to B
+def createMatrix():
+
+	for k in range (2, B):
+		rootNK = int(math.sqrt(N * k))
+
+		for j in range (2, k):
+			
+			r = rootNK + j
+			modVal = (r * r) % N
+
+			if(bSmooth(modVal)):
+				factors = primeFactor(modVal)
+				
+				# find binary representation of factors
+				line = [0] * len(primes)
+
+				# for each prime factor, set that bit in the line to 1
+				for x in factors:
+					line[primes.index(x)] = 1
+
+				tLine = tuple(line)
+				if not tLine in r_dict:
+					r_dict[tLine] = [modVal, factors]
+
+
+def basicQuadraticSieve( N, xSqu, ySqu ):
+	getcontext().prec = 2000
+	
+	"""
+	x = int(Decimal.sqrt(Decimal(xSqu)))
+	y = int(Decimal.sqrt(Decimal(ySqu)))
+	"""
+	x = xSqu
+	y = ySqu
+	print("xy")
+	print(x)
+	print(y)
+	if ( ((x * x) % N) == ( (y * y) % N)): 
+		if (x == y):
+			print("if")
+			return False
 		a = x+y
 		b = N
 
@@ -134,16 +233,9 @@ def basicQuadraticSieve( N, x, y ):
 			a = c
 	return False
 						
-# Testing code
-# basicQuadraticSieve(457 * 673)
 
-# Add parameters later for matrix input 
 def createMatrixInput ( matrix ):
-	# Matrix Dimensions with dummy values
 
-	# Test matrix
-
-	# matrix2 = generateRNG(M,N)
 	M=len(matrix)
 	N = len(matrix[0])
 	file  = open(inputFile, "w")
@@ -158,12 +250,6 @@ def createMatrixInput ( matrix ):
 		file.write("\n")
 	file.close()
 
-	""" Debugging for matrixInput creator
-	print("matrixInput.txt:")
-	subprocess.call("cat matrixInput.txt", shell=True)
-	print("\n")
-	"""
-
 	return
 
 # reads in the output file from GaussBin
@@ -172,79 +258,42 @@ def readMatrixOutput (filename):
 
 	dimensions=file.readline()
 	dim = dimensions.split()
-	
-	# read single line of matrix output
-	# file.readline()
-	# strMatrix = file.readline().split()
-	# matrix = [int(i) for i in strMatrix]
-	
-	""" print matrix dimensions
-	print("M: %s \n" % dim[0])
-	print("N: %s" % dim[1])
-	"""
 
 	strMatrix = [ file.readline().split()  for i in range( int(dim[0])) ] 
+
 	matrix = [ [int(i) for i in line] for line in strMatrix] 
 
-	""" Print input matrix
-	for line in matrix:
-		print("%s \n" % line)
-	"""
+
 
 	return matrix
 
 # Wrapper for the GaussBin program
 def GaussianElimination ():
 
-	""" Testing code """
-	# args = ["./a.out "+ descriptionExample + " " + outputFile]
 
-	""" Final code """
 	args = ["./a.out ./matrixInput.txt ./matrixOutput.txt"]
 
 	subprocess.call( args, shell=True )
-	""" Debug code
-	print("matrixOutput.txt")
-	subprocess.call( ["cat", "matrixOutput.txt"])
-	"""
+	
 	return
-""" Sebastian's Code
-# systems the actual r values we use to create an x^2 value
-# indicator equations from the system to actually use.
-# Dependency: Uses the global variable primes (first N primes)
-def createSystem (systems, indicator):
-	# printMatrix(systems)
-	for prime in systems:
-"""
-"""
-		print("prime:")
-		print(prime)
-"""
-"""
-		# print(inversePrime(prime))
 
-# Convert a matrix row to a 
-def inversePrime (row):
-	primeNum=1
-	# print("prime")
-	# print(row)
-	for i in range(len(row)):
-		if(row[i] == 1):
-			
-			# print("prime %s: %s" % (i, primes[i]))
-			
-			primeNum = primeNum * primes[i]
-	# print()
-	return primeNum
-
-"""
 
 """ Nick's Code - Working solution """
+
+def sandBox():
+	# newPowers = [ 0 for i in len(rArray[3]) ]
+	powers = [i*2 for i in range(100)]
+	newPowers = [0 for i in range(100)]
+	for i in range(len(powers)):
+		newPowers[i] = int(powers[i] / 2)
+	#print(powers)
+	#print(newPowers)
 
 def createX(matrix, matrix2):
 	running = True
 	
 	#Check each solution
+	# Determines which lines in matrix1 to use
 	for line in matrix2:
 
 		# r values unmodded
@@ -252,49 +301,56 @@ def createX(matrix, matrix2):
 		# r values modded
 		rModTotal = 1
 
-		# print(line)
-		# Multiply by each number specified
-		for i in range(0, len(line)):
-			if(line[i] == 1):
-				rVal = (rVal * rValues[i]) % N
-				for factor in rFactors[i]:
-					rModTotal = rModTotal * factor	
+		rModHalf = 1
 
-		# use decimal for square root to avoid overflow
-		dec = Decimal(rModTotal)
-		if (basicQuadraticSieve(N, rVal, int(Decimal.sqrt(dec)) % N)):
+		factorDict = dict()
+
+		
+		# Multiply by each number specified
+		# newPowers = [ 0 for j in range(len(rArray[3])) ]
+
+		# Use this line in matrix1
+		for col in range(len(line)):
+
+			if (line[col] == 1):
+				rArray = r_dict[tuple(matrix[col])]
+				#print(rArray)
+				# Make new powers for the factors
+				"""
+				print('set')
+				print(rArray[1])
+				print(rArray[2])
+				print(rArray[3])
+				"""
+				# rArray 2 list of factors
+				# rArray 3 list of multiplicities
+				for j in range(len(rArray[2])):
+					if rArray[2][j] not in factorDict:
+						factorDict[rArray[2][j]] = rArray[3][j]
+					else: 
+						factorDict[rArray[2][j]] += rArray[3][j]
+					#print(factorDict)
+				#print(rArray[0])
+				rVal *= rArray[0]
+				rModHalf *= rArray[1]
+		print(factorDict)
+		for key in factorDict:
+			for i in range(int(math.floor(factorDict[key]/2))):
+				rModTotal *= key
+
+		print(rModHalf % N)
+		print((rModTotal * rModTotal) % N)
+
+		if (basicQuadraticSieve(N, rVal, rModTotal)):
 			return
 
 
-# Testing function calls
-
-# Create matrix of factored numbers.
-matrix = createMatrix()
-
-# rValues=newRValues
-# rFactors=newRFactors
-
-# print(rValues)
-# print()
-# print(rFactors)
-
-# Creates input file for GaussBin
-createMatrixInput(matrix)
-
-# Runs Gauss Bin 
-GaussianElimination()
-
-# Reads the result of GaussBin
-matrix = readMatrixOutput(inputFile)
-matrix2 = readMatrixOutput(outputFile)
-
-createX(matrix, matrix2)
-
-# DEBUGGING Prints the result of GaussBin
-# printMatrix(matrix2)
-# for i in range(M):
-# 	if ( matrix[i] != matrix2[i]):
-# 		print("Original matrix: \n")
-# 		print ("%s \n" % matrix[i])
-# 		print("readMatrixOutput: \n")
-# 		print ( "%s \n\n" % matrix2[i])
+def proj1():
+	matrix = createMatrix()
+	createMatrixInput(matrix)
+	GaussianElimination()
+	matrix2 = readMatrixOutput(outputFile)
+	createX(matrix,matrix2)
+	return
+#sandBox()
+proj1()
