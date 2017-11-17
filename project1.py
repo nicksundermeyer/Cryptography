@@ -2,16 +2,17 @@ import math
 import random
 import subprocess
 from decimal import *
-import sympy
 
-N = 392742364277
+
+#N = 392742364277
+N = 7*11
 
 # Number of primes we are bounded by
-B = 1000
+B =300
 
 L = 1000
 # Number of solutions to have
-Lvals = 1010
+Lvals = 300
 
 testR = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
 
@@ -48,10 +49,10 @@ def readFile(s, n):
 			if(int(i) < n):
 				result.append(int(i))
 				primeCount = primeCount + 1
-			
 		if(int(tmp[0]) > n or primeCount > B):
 			parsing = False
 	file.close()
+
 	return result
 
 # contains primes up to N, for calculating factorization of numbers
@@ -61,33 +62,40 @@ primes = readFile("prim_2_24.txt", N)
 def createMatrix():
 
 	# generating r values and placing in list
+
 	for j in range (0, math.floor(Lvals)):
-			for k in range (j):
+		for k in range (math.floor(Lvals)):
+	#for i in range(len(testR)):
+			if (len(r_dict) > Lvals ):
+				return binMatrix
+			#r = testR[i]
+			r = math.floor(math.sqrt(k * N)) + j
 
-				if (len(r_dict) > Lvals ):
-					return binMatrix
+			modVal = (r * r) % N
+			
+			# make factors
+			dFactor = primeFactor(modVal)
 
-				r = math.floor(math.sqrt(k * N)) + j
+			if (modVal == 0):
+				continue
+			factor = dFactor[0]
+			power = dFactor[1]
 
-				modVal = (r * r) % N
-				
-				# make factors
-				dFactor = primeFactor(modVal)
+			#make row
+			row = [0 for prime in range(len(primes))]
+			for col in range(len(primes)):
+				for i in range(len(factor)):
+					if(primes[col] == factor[i]):
+						row[col] = power[i] % 2
 
-				factor = dFactor[0]
-				power = dFactor[1]
+			if(bSmooth(factor) and (not tuple(row) in r_dict) ):
+				binMatrix.append(row)
+				row = tuple(row)
 
-				#make row
-				row = [0 for prime in range(len(primes))]
-				for col in range(len(primes)):
-					if(primes[col] in factor):
-						row[col] = factor.count(primes[col]) % 2
-
-				if(bSmooth(factor) and (not tuple(row) in r_dict) ):
-					binMatrix.append(row)
-					row = tuple(row)
-
-					r_dict[row] = [r, modVal, factor, power]
+				r_dict[row] = [r, modVal, factor, power]
+			#print(r_dict[tuple(binMatrix[i])])	
+			#printMatrix(binMatrix)
+			#print(len(primes))
 	return binMatrix
 """
 # decide if number is b-smooth
@@ -161,12 +169,19 @@ def bSmooth(factor):
 
 def basicQuadraticSieve( N, xSqu, ySqu ):
 	getcontext().prec = 2000
+	
+	"""
 	x = int(Decimal.sqrt(Decimal(xSqu)))
 	y = int(Decimal.sqrt(Decimal(ySqu)))
-
-	if ( ((xSqu) % N) == ( (ySqu) % N)): 
-		if (x != y):
-			print("Problems")
+	"""
+	x = xSqu
+	y = ySqu
+	print("xy")
+	print(x)
+	print(y)
+	if ( ((x * x) % N) == ( (y * y) % N)): 
+		if (x == y):
+			print("if")
 			return False
 		a = x+y
 		b = N
@@ -246,12 +261,14 @@ def sandBox():
 	newPowers = [0 for i in range(100)]
 	for i in range(len(powers)):
 		newPowers[i] = int(powers[i] / 2)
-	print(powers)
-	print(newPowers)
+	#print(powers)
+	#print(newPowers)
+
 def createX(matrix, matrix2):
 	running = True
 	
 	#Check each solution
+	# Determines which lines in matrix1 to use
 	for line in matrix2:
 
 		# r values unmodded
@@ -261,26 +278,45 @@ def createX(matrix, matrix2):
 
 		rModHalf = 1
 
-		# Multiply by each number specified
+		factorDict = dict()
 
-		for i in range(len(line)):
-
-			rArray = r_dict[tuple(matrix[i])]
-			
-			if(line[i] == 1):
-				# Make new powers for the factors
-				
-				newPowers = [ 0 for i in range(len(rArray[3])) ]
-				for i in len(rArray[3]):
-					newPowers[i] = int(rArray[3][i] / 2)
-
-				rVal *= rArray[0]
-
-				for 
-				rModTotal *= rArray[1]
-			
 		
-		if (basicQuadraticSieve(N, rVal*rVal, rModTotal)):
+		# Multiply by each number specified
+		# newPowers = [ 0 for j in range(len(rArray[3])) ]
+
+		# Use this line in matrix1
+		for col in range(len(line)):
+
+			if (line[col] == 1):
+				rArray = r_dict[tuple(matrix[col])]
+				#print(rArray)
+				# Make new powers for the factors
+				"""
+				print('set')
+				print(rArray[1])
+				print(rArray[2])
+				print(rArray[3])
+				"""
+				# rArray 2 list of factors
+				# rArray 3 list of multiplicities
+				for j in range(len(rArray[2])):
+					if rArray[2][j] not in factorDict:
+						factorDict[rArray[2][j]] = rArray[3][j]
+					else: 
+						factorDict[rArray[2][j]] += rArray[3][j]
+					#print(factorDict)
+				#print(rArray[0])
+				rVal *= rArray[0]
+				rModHalf *= rArray[1]
+		print(factorDict)
+		for key in factorDict:
+			for i in range(int(math.floor(factorDict[key]/2))):
+				rModTotal *= key
+
+		print(rModHalf % N)
+		print((rModTotal * rModTotal) % N)
+
+		if (basicQuadraticSieve(N, rVal, rModTotal)):
 			return
 
 
@@ -291,5 +327,5 @@ def proj1():
 	matrix2 = readMatrixOutput(outputFile)
 	createX(matrix,matrix2)
 	return
-sandBox()
-# proj1()
+#sandBox()
+proj1()
