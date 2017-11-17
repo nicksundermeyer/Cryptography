@@ -1,17 +1,24 @@
 import math
 import random
 import subprocess
+from decimal import *
 
 
-N = 457*673
+N = 31741649
 
 # Number of primes we are bounded by
 B = 1000
+
 L = 10000
+# Number of solutions to have
+Lvals = 1000
+
+testR = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
 
 factorBase = []
 rValues = []
 rFactors = []
+rModValues=[]
 binMatrix = []
 
 newRValues = []
@@ -42,13 +49,13 @@ def readFile(s, n):
 				result.append(int(i))
 				primeCount = primeCount + 1
 			
-		if(int(tmp[0]) > n or primeCount > 1000):
+		if(int(tmp[0]) > n or primeCount > B):
 			parsing = False
 	file.close()
 	return result
 
 # contains primes up to N, for calculating factorization of numbers
-primes = readFile("prim_2_24.txt", 1000)
+primes = readFile("prim_2_24.txt", N)
 
 # creating matrix of 1s and 0s corresponding to primes up to B
 def createMatrix():
@@ -56,38 +63,65 @@ def createMatrix():
 	# generating r values and placing in list
 
 	for j in range (0, math.floor(math.sqrt(L))):
-		for k in range (0, math.floor(math.sqrt(L))):
+	# for j in range(1):
+		
+		# Debug
+		#for k in range(len(testR)):
 
-			if (len(rValues) > 1000 ):
-				break;
+			for k in range (0, math.floor(math.sqrt(L))):
 
-			r = math.floor(math.sqrt(k * N)) + j
-			modVal = (r * r) % N
-			
-			# make factors
-			factor = primeFactor(n)
+				if (len(rValues) > Lvals ):
+					break;
 
-			#make row
+				r = math.floor(math.sqrt(k * N)) + j
+				# Debug r = testR[k]
+				modVal = (r * r) % N
+				
+				# make factors
+				factor = primeFactor(modVal)
+				#make row
 
-			row = [0 for prime in range(len(primes))]
-			for col in range(len(primes)):
-				if(prime[col] in factor):
-					row[col] = factor.count(primes[col] % 2 )
+				row = [0 for prime in range(len(primes))]
+				for col in range(len(primes)):
+					if(primes[col] in factor):
+						row[col] = factor.count(primes[col]) % 2
 
+				"""
+				if(bSmooth(factor) ):
+					rValues.append(r)
+					rFactors.append(factor)
+				"""
+				""" Debug
+				if :
+					print(row)
+				else:
+					print(nots)
+				"""
+				if(bSmooth(factor) and (not row in binMatrix) ):
+					rValues.append(r)
+					rFactors.append(factor)
+					rModValues.append(modVal)
+					binMatrix.append(row)
+			# print(binMatrix)
 
-			if(bSmooth( modVal) and (not row in binMatrix)):
-				rValues.append(r)
-				rFactors.append(factor)
-				binMatrix.append(row)
-
+	print(len(rValues))
+	#printMatrix(binMatrix)
+	#print(rFactors)
+	#print(primes)
 	# Dummy Code to create the correct rFactors
+
+
 	"""
 	for r in rValues:
 		modVal = (r * r) % N
 		bSmooth( modVal)
 	"""
+
+
 	# creating matrix result
-	result = []
+	# result = []
+
+
 	"""
 	# check which factors are primes, set bits in matrix for those primes
 	for x in range(len(rValues)):
@@ -100,10 +134,10 @@ def createMatrix():
 			result.append(row)
 			newRValues.append(x)
 			newRFactors.append(rFactors[x])
-	print("Number of Rs %s " % len(newRValues))
-	# print(len(newRFactors))
-	# print(len(result))
+	
 	print("Size of factorbase %s " % len(primes))
+	"""
+
 
 	# for x in range(len(rValues)):
 	# 	for y in range(B):
@@ -119,7 +153,7 @@ def createMatrix():
 	print("result matrix: ")
 	printMatrix(result)
 	"""
-	return result
+	return binMatrix
 
 # trial division using list of primes to find prime factorization of number
 def primeFactor(n):
@@ -157,6 +191,7 @@ def bSmooth(factor):
 def basicQuadraticSieve( N, x, y ):
 
 	if ( ((x * x) % N) == ( (y * y) % N) and x != y): 
+
 		a = x+y
 		b = N
 		# Debugging code 
@@ -296,7 +331,7 @@ def inversePrime (row):
 
 """ Nick's Code - Working solution """
 
-def createX(matrix, matrix2):
+def createX(matrix2):
 	running = True
 	
 	#Check each solution
@@ -309,16 +344,26 @@ def createX(matrix, matrix2):
 
 		# print(line)
 		# Multiply by each number specified
-		for i in range(0, len(line)):
+		# Debug
+		# print("line: %s" % line)
+
+		for i in range(len(line)):
 			if(line[i] == 1):
 				# print("prime: " + str(i) + ": " + str(primes[i]))
 				rVal *= rValues[i]
 				#print(rFactors[i])
+				rModTotal *= rModValues[i]
+				"""
 				for factor in rFactors[i]:
-					rModTotal = ((rModTotal * factor ) % N)	
-		# print(rVal % N)
-		# print(int(math.sqrt(rModTotal) % N))
-		if (basicQuadraticSieve(N, rVal, int(math.sqrt(rModTotal) % N) )):
+					rModTotal = rModTotal * factor
+				"""
+		"""Debug
+					print("factors: %s" % rModTotal)
+		print("x: %s" %(rVal % N) )
+		print("y: %s" % (int(math.sqrt(rModTotal) % N)))
+		"""
+		if (basicQuadraticSieve(N, rVal, 
+			int(Decimal.sqrt(Decimal(rModTotal))) % N )):
 			return
 
 
@@ -335,25 +380,31 @@ def createX(matrix, matrix2):
 
 # Create matrix of factored numbers.
 # rValues = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
-matrix = createMatrix()
+def proj1():
+	matrix = createMatrix()
+	createMatrixInput(matrix)
+	GaussianElimination()
+	matrix2 = readMatrixOutput(outputFile)
+	createX(matrix2)
+	return
 
-rValues=newRValues
-rFactors=newRFactors
+proj1()
 
+""" Debug
 print(len(rValues))
 print(len(rFactors))
+"""
 # printMatrix(matrix)
 # print()
 
 # Creates input file for GaussBin
-createMatrixInput(matrix)
+
 
 # Runs Gauss Bin 
-GaussianElimination()
+
 
 # Reads the result of GaussBin
-matrix = readMatrixOutput(inputFile)
-matrix2 = readMatrixOutput(outputFile)
+
 
 """
 #Debugging code
@@ -369,7 +420,7 @@ printMatrix(matrix2)
 
 # print(rValues)
 
-createX(matrix, matrix2)
+
 """
 print("rValues:")
 print(rValues)
