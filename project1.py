@@ -1,15 +1,16 @@
 import math
 import random
 import subprocess
+from decimal import *
 
-
-N = 17*19
+N = 323
 
 # Number of primes we are bounded by
-B = 1000
+B = 500
 L = 1000
 
-factorBase = []
+table = [] # table to hold j, k, r, and r^2modn values
+factorBase = []	#use set for factorbase when checking factors, faster checking time
 rValues = []
 rFactors = []
 
@@ -22,49 +23,53 @@ inputFile = "./matrixInput.txt"
 descriptionExample = "./descriptionExample.txt"
 # GaussBin outputfile
 outputFile = "matrixOutput.txt"
+
 # helper method to print matrix in readable way
 def printMatrix(matrix):
     for row in matrix:
         print(' '.join(map(str,row)))
 
 def readFile(s, n):
-	# parsing file for primes up to n
+	# parsing file for n primes
 	file = open(s)
 	result = []
 	parsing = True
-	primeCount = 0;
+	
 	while(parsing):
-		line = file.readline().strip()
-		tmp = line.split(" ")
-		for i in tmp:
-			if(int(i) < n):
-				result.append(int(i))
-				primeCount = primeCount + 1
-			
-		if(int(tmp[0]) > n or primeCount > 1000):
+		tmp = file.readline().strip()
+		line = tmp.split(" ")
+
+		for i in line:
+			result.append(int(i))
+
+		if(len(result) > n):
 			parsing = False
+
 	file.close()
 	return result
 
-# contains primes up to N, for calculating factorization of numbers
-primes = readFile("prim_2_24.txt", 1000)
+# contains primes up to a certain number, for quickly calculating prime factorization
+primes = readFile("prim_2_24.txt", B)
 
 # creating matrix of 1s and 0s corresponding to primes up to B
 def createMatrix():
 
 	# generating r values and placing in list
 
-	for j in range (0, L):
-		for k in range (0, L):
+	for k in range (0, L):
+		for j in range (0, L):
 
-			if (len(rValues) > 1000 ):
-				break;
-
+			array = []
 			r = math.floor(math.sqrt(k * N)) + j
 			modVal = (r * r) % N
-			
-			if(bSmooth( modVal) ):
-				rValues.append(r)
+
+			factor = primeFactor(modVal)
+
+			# if the r value is b-smooth, then add the j, k, r, and mod values to the table
+			# and add the factors to the factor array
+			if(max(factor, default=0) < primes[B]):
+				table.append([k, j, r, modVal]);
+				rFactors.append(factor)
 
 	# Dummy Code to create the correct rFactors
 	"""
@@ -84,35 +89,12 @@ def createMatrix():
 
 		if not row in result:
 			result.append(row)
-			newRValues.append(x)
-			newRFactors.append(rFactors[x])
-	print(len(newRValues))
-	print(len(newRFactors))
-	print(len(result))
-	print(len(primes	))
 
-	# for x in range(len(rValues)):
-	# 	for y in range(B):
-	# 		# print(str(primes[y]) + " " + str(rFactors[y]) + " " + str(primes[y] in rFactors[y]))
-	# 		# print("x: %s, y: %s" % (x, y))
-	# 		# print ("factor: %s %s" %(primes[y], rFactors[x]) ) 
-	# 		if(primes[y] in rFactors[x]):
-	# 			# Very inefficient function below 
-
-	# 			# print(str(x) + " " + str(y))
-	# 			result[x][y] = (rFactors[x].count(primes[y]) % 2 )
-	"""Debugging code
-	print("result matrix: ")
-	printMatrix(result)
-	"""
 	return result
 
 # trial division using list of primes to find prime factorization of number
 def primeFactor(n):
 	result = []
-
-	# Tests factorization
-	# print("prime: %s" % n)
 
 	if (n == 0):
 		return result
@@ -124,17 +106,12 @@ def primeFactor(n):
 			if (n <= 1):
 				break
 
-	# Tests factorization
-	# print("factors: %s \n" % result)
 	return result
 
 # decide if number is b-smooth
 def bSmooth(n):
 	factor = primeFactor(n)
-	"""
-	print("prime: %s" % n)
-	print("factors: %s" % factor)
-	"""
+
 	if(max(factor, default=0) < primes[B] ) :
 		rFactors.append(factor)
 		return True
@@ -146,12 +123,6 @@ def basicQuadraticSieve( N, x, y ):
 	if ( ((x * x) % N) == ( (y * y) % N) and x != y): 
 		a = x+y
 		b = N
-		# Debugging code 
-		"""
-		print('initials')
-		print (a)
-		print (b)
-		"""
 
 		# Gets the gcd of N and x+y
 		while ( 1 ):
@@ -192,6 +163,7 @@ def createMatrixInput ( matrix ):
 				file.write( "%s "  % 1)
 		file.write("\n")
 	file.close()
+
 	""" Debugging for matrixInput creator
 	print("matrixInput.txt:")
 	subprocess.call("cat matrixInput.txt", shell=True)
@@ -199,12 +171,6 @@ def createMatrixInput ( matrix ):
 	"""
 
 	return
-
-# Generates a random matrix for testing
-def generateRNG (M, N):
-	seed(256)
-	matrix = [ [ randint(0, 1) for x in range(M) ] for y in range(N) ]
-	return matrix
 
 # reads in the output file from GaussBin
 def readMatrixOutput (filename):
@@ -222,10 +188,8 @@ def readMatrixOutput (filename):
 	print("M: %s \n" % dim[0])
 	print("N: %s" % dim[1])
 	"""
-	# print("readMatrixOutput: \n")
+
 	strMatrix = [ file.readline().split()  for i in range( int(dim[0])) ] 
-	# for i in strMatrix:
-	# 	print(i)
 	matrix = [ [int(i) for i in line] for line in strMatrix] 
 
 	""" Print input matrix
@@ -298,39 +262,27 @@ def createX(matrix, matrix2):
 		# Multiply by each number specified
 		for i in range(0, len(line)):
 			if(line[i] == 1):
-				# print("prime: " + str(i) + ": " + str(primes[i]))
-				rVal *= rValues[i]
-				#print(rFactors[i])
+				rVal = (rVal * rValues[i]) % N
 				for factor in rFactors[i]:
-					rModTotal = ((rModTotal * factor ) % N)	
-		# print(rVal % N)
-		# print(int(math.sqrt(rModTotal) % N))
-		if (basicQuadraticSieve(N, rVal, int(math.sqrt(rModTotal) % N) )):
+					rModTotal = rModTotal * factor	
+
+		# use decimal for square root to avoid overflow
+		dec = Decimal(rModTotal)
+		if (basicQuadraticSieve(N, rVal, int(Decimal.sqrt(dec)) % N)):
 			return
 
 
-		# print(x)
-
-		# Calculate gcd, if it's correct then return, otherwise continue the loop
-
-
 # Testing function calls
-# M=10
-# N=10
-# matrix = generateRNG(M, N)
-# createMatrixInput(matrix)
 
 # Create matrix of factored numbers.
-# rValues = [225, 261, 291, 292, 317, 343, 413, 431, 458, 469, 473, 490]
 matrix = createMatrix()
 
-rValues=newRValues
-rFactors=newRFactors
+# rValues=newRValues
+# rFactors=newRFactors
 
-print(len(rValues))
-print(len(rFactors))
-# printMatrix(matrix)
+# print(rValues)
 # print()
+# print(rFactors)
 
 # Creates input file for GaussBin
 createMatrixInput(matrix)
@@ -342,29 +294,7 @@ GaussianElimination()
 matrix = readMatrixOutput(inputFile)
 matrix2 = readMatrixOutput(outputFile)
 
-"""
-#Debugging code
-print("matrix")
-printMatrix(matrix)
-print("matrix2")
-printMatrix(matrix2)
-"""
-
-# createSystem(matrix, matrix2)
-
-
-
-# print(rValues)
-
 createX(matrix, matrix2)
-"""
-print("rValues:")
-print(rValues)
-print("rFactors")
-print(rFactors)
-"""
-
-# printMatrix(matrix2)
 
 # DEBUGGING Prints the result of GaussBin
 # printMatrix(matrix2)
@@ -374,8 +304,3 @@ print(rFactors)
 # 		print ("%s \n" % matrix[i])
 # 		print("readMatrixOutput: \n")
 # 		print ( "%s \n\n" % matrix2[i])
-
-# print(rFactors)
-# print()
-# print(rValues)
-# print(rFactors)
