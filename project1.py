@@ -3,15 +3,16 @@ import random
 import subprocess
 
 
-N = 17*19
+N = 457*673
 
 # Number of primes we are bounded by
 B = 1000
-L = 1000
+L = 10000
 
 factorBase = []
 rValues = []
 rFactors = []
+binMatrix = []
 
 newRValues = []
 newRFactors = []
@@ -54,8 +55,8 @@ def createMatrix():
 
 	# generating r values and placing in list
 
-	for j in range (0, L):
-		for k in range (0, L):
+	for j in range (0, math.floor(math.sqrt(L))):
+		for k in range (0, math.floor(math.sqrt(L))):
 
 			if (len(rValues) > 1000 ):
 				break;
@@ -64,8 +65,21 @@ def createMatrix():
 
 			modVal = (r * r) % N
 			
-			if(bSmooth( modVal) ):
+			# make factors
+			factor = primeFactor(n)
+
+			#make row
+
+			row = [0 for prime in range(len(primes))]
+			for col in range(len(primes)):
+				if(prime[col] in factor):
+					row[col] = factor.count(primes[col] % 2 )
+
+
+			if(bSmooth( modVal) and (not row in binMatrix)):
 				rValues.append(r)
+				rFactors.append(factor)
+				binMatrix.append(row)
 
 	# Dummy Code to create the correct rFactors
 	"""
@@ -75,11 +89,11 @@ def createMatrix():
 	"""
 	# creating matrix result
 	result = []
-	
+	"""
 	# check which factors are primes, set bits in matrix for those primes
 	for x in range(len(rValues)):
-		row = [0 for primes in range(min(len(primes),B))]
-		for y in range(B):
+		row = [0 for primes in range(len(primes))]
+		for y in range(len(primes)):
 			if(primes[y] in rFactors[x]):
 				row[y] = (rFactors[x].count(primes[y]) % 2 )
 
@@ -87,10 +101,10 @@ def createMatrix():
 			result.append(row)
 			newRValues.append(x)
 			newRFactors.append(rFactors[x])
-	print(len(newRValues))
-	print(len(newRFactors))
-	print(len(result))
-	print(len(primes	))
+	print("Number of Rs %s " % len(newRValues))
+	# print(len(newRFactors))
+	# print(len(result))
+	print("Size of factorbase %s " % len(primes))
 
 	# for x in range(len(rValues)):
 	# 	for y in range(B):
@@ -130,14 +144,13 @@ def primeFactor(n):
 	return result
 
 # decide if number is b-smooth
-def bSmooth(n):
-	factor = primeFactor(n)
+def bSmooth(factor):
+	
 	"""
 	print("prime: %s" % n)
 	print("factors: %s" % factor)
 	"""
-	if(max(factor, default=0) < primes[B] ) :
-		rFactors.append(factor)
+	if(max(factor, default=0) < primes[len(primes)-1] ) :
 		return True
 	else:
 		return False
