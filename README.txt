@@ -22,7 +22,8 @@ The number of solutions is too many (2^28) ... trancated to 2^12!
 p is 388117391953
 q is 474620965361
 -------------------------------------------------------------------
-We will look to optimize the code more
+
+We will look to optimize the code more before the presentation. Especially with regards to our factoring algorithms for our R values.
 
 
 
