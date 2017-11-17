@@ -48,7 +48,7 @@ def readFile(s, n):
 	return result
 
 # contains primes up to N, for calculating factorization of numbers
-primes = readFile("prim_2_24.txt", N)
+primes = readFile("prim_2_24.txt", 1000)
 
 # creating matrix of 1s and 0s corresponding to primes up to B
 def createMatrix():
@@ -62,7 +62,6 @@ def createMatrix():
 				break;
 
 			r = math.floor(math.sqrt(k * N)) + j
-
 			modVal = (r * r) % N
 			
 			# make factors
