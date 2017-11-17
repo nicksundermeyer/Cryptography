@@ -162,7 +162,7 @@ def basicQuadraticSieve( N, xSqu, ySqu ):
 			return False
 		a = x+y
 		b = N
-		
+
 		# Gets the gcd of N and x+y
 		while ( 1 ):
 			# Gets q given p which is gcd.
@@ -232,6 +232,14 @@ def GaussianElimination ():
 
 """ Nick's Code - Working solution """
 
+def sandBox():
+	# newPowers = [ 0 for i in len(rArray[3]) ]
+	powers = [i*2 for i in range(100)]
+	newPowers = [0 for i in range(100)]
+	for i in range(len(powers)):
+		newPowers[i] = int(powers[i] / 2)
+	print(powers)
+	print(newPowers)
 def createX(matrix, matrix2):
 	running = True
 	
@@ -246,14 +254,21 @@ def createX(matrix, matrix2):
 		rModHalf = 1
 
 		# Multiply by each number specified
-		
 
 		for i in range(len(line)):
 
 			rArray = r_dict[tuple(matrix[i])]
+			
 			if(line[i] == 1):
+				# Make new powers for the factors
+				
+				newPowers = [ 0 for i in range(len(rArray[3])) ]
+				for i in len(rArray[3]):
+					newPowers[i] = int(rArray[3][i] / 2)
+
 				rVal *= rArray[0]
 
+				for 
 				rModTotal *= rArray[1]
 			
 		
@@ -268,5 +283,5 @@ def proj1():
 	matrix2 = readMatrixOutput(outputFile)
 	createX(matrix,matrix2)
 	return
-
-proj1()
+sandBox()
+# proj1()
