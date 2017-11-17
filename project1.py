@@ -4,8 +4,8 @@ import subprocess
 from decimal import *
 
 
-#N = 392742364277
-N = 7*11
+N = 392742364277
+
 
 # Number of primes we are bounded by
 B =300
@@ -63,18 +63,19 @@ def createMatrix():
 
 	# generating r values and placing in list
 
-	for j in range (0, math.floor(Lvals)):
-		for k in range (math.floor(Lvals)):
+	for k in range (L):
+		for j in range(k):
 	#for i in range(len(testR)):
 			if (len(r_dict) > Lvals ):
 				return binMatrix
 			#r = testR[i]
 			r = math.floor(math.sqrt(k * N)) + j
 
-			modVal = (r * r) % N
+			modVal = ((r * r) % N)
 			
 			# make factors
 			dFactor = primeFactor(modVal)
+			return
 
 			if (modVal == 0):
 				continue
@@ -93,6 +94,12 @@ def createMatrix():
 				row = tuple(row)
 
 				r_dict[row] = [r, modVal, factor, power]
+				"""
+				print(r)
+				print("modVal: %s" % modVal)
+				print(factor)
+				print(power)
+				"""
 			#print(r_dict[tuple(binMatrix[i])])	
 			#printMatrix(binMatrix)
 			#print(len(primes))
@@ -140,10 +147,11 @@ def createMatrix():
 def primeFactor(n):
 	result = []
 	result2 = []
-
+	print(n)
 	if (n == 0):
 		return result
 	for p in primes:
+		print(p)
 		while(n % p == 0):
 			n = n / p
 			
@@ -155,7 +163,8 @@ def primeFactor(n):
 
 			if (n <= 1):
 				break
-
+	print(result)
+	print(result2)
 	return [result, result2]
 
 # decide if number is b-smooth
@@ -176,9 +185,7 @@ def basicQuadraticSieve( N, xSqu, ySqu ):
 	"""
 	x = xSqu
 	y = ySqu
-	print("xy")
-	print(x)
-	print(y)
+
 	if ( ((x * x) % N) == ( (y * y) % N)): 
 		if (x == y):
 			print("if")
@@ -308,13 +315,25 @@ def createX(matrix, matrix2):
 				#print(rArray[0])
 				rVal *= rArray[0]
 				rModHalf *= rArray[1]
-		print(factorDict)
+				"""
+				print(rArray[1])
+				print(rArray[2])
+				print(rArray[3])
+				"""
+
+		#print(factorDict)
 		for key in factorDict:
+			print(factorDict[key]/2)
 			for i in range(int(math.floor(factorDict[key]/2))):
 				rModTotal *= key
-
-		print(rModHalf % N)
-		print((rModTotal * rModTotal) % N)
+		if(rModHalf != (rModTotal* rModTotal)) :
+			print("die")
+			print(factorDict)
+			return
+		else:
+			print("win")
+		#print(rModHalf % N)
+		#print((rModTotal * rModTotal) % N)
 
 		if (basicQuadraticSieve(N, rVal, rModTotal)):
 			return
