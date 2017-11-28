@@ -25,6 +25,9 @@ Home exercise 3: Determine the cycle set for the first two poynomials in HE 1.
 Laboratory exercise 3: Determine the cycle set for the first two poynomials in LE 1. 
 
 Home exercise 4: Find a primitive polynomial of degree 4 over F2.
-p(x) = x^4 + x + 1
+pi(x) = x^4 + x + 1
+C(D) = 1 + D^3 + D^4
 
 Laboratory exercise 4: Find a primitive polynomial of degree 4 over F5.
+p(x) = x^4 + 2x^3 + 2x + 2
+C(D) = 1 + 2D + 2D^3 + 2D^4
