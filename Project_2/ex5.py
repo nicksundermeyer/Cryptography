@@ -30,7 +30,7 @@ while(not register in Z2):
         register.popleft()
         register.append(x)
 
-register = deque([0, 0, 0, 1])
+register = deque([1, 0, 0, 0])
 
 # C(D) = 1 + 2D + 2D^3 + 2D^4
 
@@ -38,12 +38,19 @@ while(not register in Z5):
     Z5.append(register.copy())
 
     # adding registers 1, 3, 4 multiplied by their coefficients and mod 5
-    x = (3*register[0] + 3*register[1] + 2*register[3])%5
+    x = (2*register[0] + 2*register[1] + 3*register[3])%5
 
-    print(str(2*register[0]) + "+" + str(2*register[1]) + "+" + str(2*register[3]) + " = " + str(2*register[0] + 2*register[1] + 2*register[3]) + "mod5 = " + str(x))
-    print(register)
-    print()
+    # print(str(2*register[0]) + "+" + str(2*register[1]) + "+" + str(2*register[3]) + " = " + str(2*register[0] + 2*register[1] + 2*register[3]) + "mod5 = " + str(x))
+    # print(register)
+    # print()
 
-    register.popleft()
-    register.append(x)
-print(len(Z5))
+    if(register == deque([1, 0, 0, 0])):
+        register.popleft()
+        register.append(0)
+    elif(register == deque([0, 0, 0, 0])):
+        register.popleft()
+        register.append(2)
+    else:
+        register.popleft()
+        register.append(x)
+# print(len(Z5))
