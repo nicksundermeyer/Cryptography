@@ -38,7 +38,7 @@ while(not register in Z5):
     Z5.append(register.copy())
 
     # adding registers 1, 3, 4 multiplied by their coefficients and mod 5
-    x = (2*register[0] + 2*register[1] + 3*register[3])%5
+    x = (3*register[0] + 2*register[2] + 2*register[3])%5
 
     # print(str(2*register[0]) + "+" + str(2*register[1]) + "+" + str(2*register[3]) + " = " + str(2*register[0] + 2*register[1] + 2*register[3]) + "mod5 = " + str(x))
     # print(register)
@@ -49,7 +49,7 @@ while(not register in Z5):
         register.append(0)
     elif(register == deque([0, 0, 0, 0])):
         register.popleft()
-        register.append(2)
+        register.append(3)
     else:
         register.popleft()
         register.append(x)
