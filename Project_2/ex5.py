@@ -13,7 +13,7 @@ Z10 = []
 
 # p(x) = x^4 + x + 1
 
-generating Z2
+# generating Z2
 while(not register in Z2):
     Z2.append(register.copy())
 
@@ -38,7 +38,7 @@ while(not register in Z5):
     Z5.append(register.copy())
 
     # adding registers 1, 3, 4 multiplied by their coefficients and mod 5
-    x = (2*register[0] + 2*register[1] + 2*register[3])%5
+    x = (3*register[0] + 3*register[1] + 2*register[3])%5
 
     print(str(2*register[0]) + "+" + str(2*register[1]) + "+" + str(2*register[3]) + " = " + str(2*register[0] + 2*register[1] + 2*register[3]) + "mod5 = " + str(x))
     print(register)
