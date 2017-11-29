@@ -7,6 +7,10 @@ register = deque([0, 0, 0, 1])
 Z2 = []
 Z5 = []
 Z10 = []
+Codes = []
+DeBruin = []
+
+outputFile="outFile.txt"
 
 # lfsr shifts digits in from the right side
 # create two de bruijn sequences, one of Z2 and one of Z5
@@ -53,4 +57,28 @@ while(not register in Z5):
     else:
         register.popleft()
         register.append(x)
-# print(len(Z5))
+print(len(Z5))
+
+firstThree=0
+
+file = open(outputFile, "w")
+
+for x in Z2:
+	for y in Z5:
+		digit=0
+		base=1
+		for index in range(len(y)):
+			codeDigit = x[index]*5 + y[index]
+			if ( firstThree < 3):
+				DeBruin.append(codeDigit)
+				file.write("%s" % codeDigit)
+				firstThree += 1
+			digit += codeDigit* base
+			base *= 10
+			Codes.append(digit)
+		codeDigitOuter = x[3] * 5 + y[3]
+		DeBruin.append(codeDigitOuter)
+		file.write("%s" % codeDigitOuter)
+		print("%04d" %(digit,))
+file.close()
+print(len(DeBruin))
