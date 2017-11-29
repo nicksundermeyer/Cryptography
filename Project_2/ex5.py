@@ -1,4 +1,5 @@
 from collections import deque
+import os
 
 # starting/current register
 register = deque([0, 0, 0, 1])
@@ -10,6 +11,8 @@ Z10 = []
 Codes = []
 DeBruin = []
 
+# make sure the current workign directory is in the project 2 folder, not the overall crypto folder
+os.chdir(os.getcwd() + "/Project_2/")
 outputFile="outFile.txt"
 
 # lfsr shifts digits in from the right side
@@ -57,7 +60,7 @@ while(not register in Z5):
     else:
         register.popleft()
         register.append(x)
-print(len(Z5))
+# print(len(Z5))
 
 firstThree=0
 
@@ -79,6 +82,6 @@ for x in Z2:
 		codeDigitOuter = x[3] * 5 + y[3]
 		DeBruin.append(codeDigitOuter)
 		file.write("%s" % codeDigitOuter)
-		print("%04d" %(digit,))
+		# print("%04d" %(digit,))
 file.close()
-print(len(DeBruin))
+# print(len(DeBruin))
