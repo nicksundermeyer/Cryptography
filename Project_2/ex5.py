@@ -12,7 +12,6 @@ Codes = []
 DeBruin = []
 
 # make sure the current workign directory is in the project 2 folder, not the overall crypto folder
-os.chdir(os.getcwd() + "/Project_2/")
 outputFile="outFile.txt"
 
 # lfsr shifts digits in from the right side
@@ -65,23 +64,35 @@ while(not register in Z5):
 firstThree=0
 
 file = open(outputFile, "w")
+file2 = open("codes", "w")
 
 for x in Z2:
+	print("x: %s" % x)
 	for y in Z5:
 		digit=0
-		base=1
+		base=1000
 		for index in range(len(y)):
-			codeDigit = x[index]*5 + y[index]
+			codeDigit = x[len(y)-index-1]*5 + y[len(y)-index-1]
 			if ( firstThree < 3):
+				#print("y: %s" % y)
+				#print("x: %s" % x)
 				DeBruin.append(codeDigit)
 				file.write("%s" % codeDigit)
 				firstThree += 1
-			digit += codeDigit* base
-			base *= 10
+			digit += (codeDigit* base)
+			base /= 10
 			Codes.append(digit)
+			file2.write("y: %s\n" % y)
+			file2.write("x: %s\n" % x)
+			file2.write("digits: %s\n\n" % codeDigit)
 		codeDigitOuter = x[3] * 5 + y[3]
 		DeBruin.append(codeDigitOuter)
 		file.write("%s" % codeDigitOuter)
 		# print("%04d" %(digit,))
+for x in range(9999):
+	if x not in Codes:
+		print(x)
+print(len(Codes))
 file.close()
+file2.close()
 # print(len(DeBruin))
