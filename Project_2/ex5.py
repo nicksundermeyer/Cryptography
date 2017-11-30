@@ -1,5 +1,6 @@
 from collections import deque
 import os
+from collections import Counter
 
 # starting/current register
 register = deque([0, 0, 0, 1])
@@ -78,17 +79,26 @@ for x in Z2:
 				#print("x: %s" % x)
 				DeBruin.append(codeDigit)
 				file.write("%s" % codeDigit)
+				file2.write("y: %s\n" % x[len(y)-index-1])
+				file2.write("x: %s\n" % y[len(y)-index-1])
+				file2.write("digits: %04d\n\n" % codeDigit)
+
 				firstThree += 1
-			digit += (codeDigit* base)
+			digit += (codeDigit*base)
 			base /= 10
-			Codes.append(digit)
-			file2.write("y: %s\n" % y)
-			file2.write("x: %s\n" % x)
-			file2.write("digits: %s\n\n" % codeDigit)
+			
+		
+
+		Codes.append(digit)
 		codeDigitOuter = x[3] * 5 + y[3]
 		DeBruin.append(codeDigitOuter)
 		file.write("%s" % codeDigitOuter)
+
+		file2.write("y: %s\n" % x[3])
+		file2.write("x: %s\n" % y[3])
+		file2.write("digits: %04d\n\n" % digit)	
 		# print("%04d" %(digit,))
+print(Counter(Codes).most_common(10))
 for x in range(9999):
 	if x not in Codes:
 		print(x)
