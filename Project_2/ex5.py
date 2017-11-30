@@ -3,106 +3,81 @@ import os
 from collections import Counter
 
 # starting/current register
-register = deque([0, 0, 0, 1])
+register2 = deque([1, 0, 0, 0])
+register5 = deque([1, 0, 0, 0])
 
 # final de bruijn sequences, in z2, z5, and z10
 Z2 = []
 Z5 = []
-Z10 = []
-Codes = []
 DeBruin = []
 
 # make sure the current workign directory is in the project 2 folder, not the overall crypto folder
-outputFile="outFile.txt"
+outputFile=os.getcwd() + "/Project_2/outputFile"
 
 # lfsr shifts digits in from the right side
 # create two de bruijn sequences, one of Z2 and one of Z5
 
 # p(x) = x^4 + x + 1
 
-# generating Z2
-while(not register in Z2):
-    Z2.append(register.copy())
+Z2.append(1)
+Z2.append(0)
+Z2.append(0)
+Z2.append(0)
+Z5.append(1)
+Z5.append(0)
+Z5.append(0)
+Z5.append(0)
 
-    # adding only registers 1 and 4
-    x = (register[0] + register[3])%2
-    
-    if(register == deque([1, 0, 0, 0])):
-        register.popleft()
-        register.append(0)
-    elif(register == deque([0, 0, 0, 0])):
-        register.popleft()
-        register.append(1)
-    else:
-        register.popleft()
-        register.append(x)
+for i in range(9999):
+	# Creating Z2
+	a = (register2[0] + register2[3])%2
 
-register = deque([1, 0, 0, 0])
+	if(register2 == deque([1, 0, 0, 0])):
+		register2.popleft()
+		register2.append(0)
+		Z2.append(0)
+	elif(register2 == deque([0, 0, 0, 0])):
+		register2.popleft()
+		register2.append(1)
+		Z2.append(1)
+	else:
+		register2.popleft()
+		register2.append(a)
+		Z2.append(a)
 
-# C(D) = 1 + 2D + 2D^3 + 2D^4
+	# Creating Z5
+	b = (3*register5[0] + 2*register5[2] + 2*register5[3])%5
 
-while(not register in Z5):
-    Z5.append(register.copy())
+	if(register5 == deque([1, 0, 0, 0])):
+		register5.popleft()
+		register5.append(0)
+		Z5.append(0)
+	elif(register5 == deque([0, 0, 0, 0])):
+		register5.popleft()
+		register5.append(3)
+		Z5.append(3)
+	else:
+		register5.popleft()
+		register5.append(b)
+		Z5.append(b)
 
-    # adding registers 1, 3, 4 multiplied by their coefficients and mod 5
-    x = (3*register[0] + 2*register[2] + 2*register[3])%5
-
-    # print(str(2*register[0]) + "+" + str(2*register[1]) + "+" + str(2*register[3]) + " = " + str(2*register[0] + 2*register[1] + 2*register[3]) + "mod5 = " + str(x))
-    # print(register)
-    # print()
-
-    if(register == deque([1, 0, 0, 0])):
-        register.popleft()
-        register.append(0)
-    elif(register == deque([0, 0, 0, 0])):
-        register.popleft()
-        register.append(3)
-    else:
-        register.popleft()
-        register.append(x)
-# print(len(Z5))
-
-firstThree=0
+test1 = []
+for i in range(len(Z2)-3):
+	test1.append(tuple([Z2[i], Z2[i+1], Z2[i+2], Z2[i+3]]))
 
 file = open(outputFile, "w")
-file2 = open("codes", "w")
 
-for x in Z2:
-	print("x: %s" % x)
-	for y in Z5:
-		digit=0
-		base=1000
-		for index in range(len(y)):
-			codeDigit = x[len(y)-index-1]*5 + y[len(y)-index-1]
-			if ( firstThree < 3):
-				#print("y: %s" % y)
-				#print("x: %s" % x)
-				DeBruin.append(codeDigit)
-				file.write("%s" % codeDigit)
-				file2.write("y: %s\n" % x[len(y)-index-1])
-				file2.write("x: %s\n" % y[len(y)-index-1])
-				file2.write("digits: %04d\n\n" % codeDigit)
+for i in range(len(Z2)):
+	x = Z2[i]
+	y = Z5[i]
 
-				firstThree += 1
-			digit += (codeDigit*base)
-			base /= 10
-			
-		
+	codeDigit = 2*y + x
 
-		Codes.append(digit)
-		codeDigitOuter = x[3] * 5 + y[3]
-		DeBruin.append(codeDigitOuter)
-		file.write("%s" % codeDigitOuter)
+	DeBruin.append(codeDigit)
+	file.write("%s" % codeDigit)
 
-		file2.write("y: %s\n" % x[3])
-		file2.write("x: %s\n" % y[3])
-		file2.write("digits: %04d\n\n" % digit)	
-		# print("%04d" %(digit,))
-print(Counter(Codes).most_common(10))
-for x in range(9999):
-	if x not in Codes:
-		print(x)
-print(len(Codes))
+test = []
+for i in range(len(DeBruin)-3):
+	test.append(tuple([DeBruin[i], DeBruin[i+1], DeBruin[i+2], DeBruin[i+3]]))
+
 file.close()
-file2.close()
-# print(len(DeBruin))
