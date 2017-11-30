@@ -2,11 +2,11 @@ from collections import deque
 import os
 from collections import Counter
 
-# starting/current register
+# tracking registers for Z2 and Z5
 register2 = deque([1, 0, 0, 0])
 register5 = deque([1, 0, 0, 0])
 
-# final de bruijn sequences, in z2, z5, and z10
+# final de bruijn sequences, Z2, and Z5
 Z2 = []
 Z5 = []
 DeBruin = []
@@ -14,11 +14,7 @@ DeBruin = []
 # make sure the current workign directory is in the project 2 folder, not the overall crypto folder
 outputFile=os.getcwd() + "/Project_2/outputFile"
 
-# lfsr shifts digits in from the right side
-# create two de bruijn sequences, one of Z2 and one of Z5
-
-# p(x) = x^4 + x + 1
-
+# appending starting values to de Bruijn sequences
 Z2.append(1)
 Z2.append(0)
 Z2.append(0)
@@ -28,6 +24,13 @@ Z5.append(0)
 Z5.append(0)
 Z5.append(0)
 
+"""
+This loop creates the de Bruijn sequences in Z2 and Z5
+Using our two primitive polynomials p(x) = x^4 + x + 1 and p(x) = 3x^4 + 2x^2 + 2x + 1
+We use an LFSR which shifts digits in from the right side
+Each iteration of the loop, we append the newly added digit to our Z2/Z5 lists and shift the register
+We also check for the special case 1000 and shift in a 0 to add the 0000 case to our sequence, making it a de Bruijn sequence
+"""
 for i in range(9999):
 	# Creating Z2
 	a = (register2[0] + register2[3])%2
@@ -61,12 +64,13 @@ for i in range(9999):
 		register5.append(b)
 		Z5.append(b)
 
-test1 = []
-for i in range(len(Z2)-3):
-	test1.append(tuple([Z2[i], Z2[i+1], Z2[i+2], Z2[i+3]]))
-
 file = open(outputFile, "w")
 
+"""
+Here is where we map Z2 and Z5 to Z10 to create the final de Bruijn sequence and write it to the file
+We go through each element of Z2 and Z5, and then map them to a digit in Z10 with (2 * element of Z5) + (element of Z2)
+Append each digit to the final sequence, write to file
+"""
 for i in range(len(Z2)):
 	x = Z2[i]
 	y = Z5[i]
@@ -75,9 +79,5 @@ for i in range(len(Z2)):
 
 	DeBruin.append(codeDigit)
 	file.write("%s" % codeDigit)
-
-test = []
-for i in range(len(DeBruin)-3):
-	test.append(tuple([DeBruin[i], DeBruin[i+1], DeBruin[i+2], DeBruin[i+3]]))
 
 file.close()
