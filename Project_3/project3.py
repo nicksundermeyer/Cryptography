@@ -4,11 +4,6 @@ import numpy
 # assuming lfsr that pushes from the left side
 keystream_sequence = "1010011010111100010001011110111001011011010011000011000110111100110001011011001001101011000010101100000000110010000111101101101101110001101111010001101001101101001001111111001101000010001100000"
 
-# generating possible initial states for the lfsrs
-L1_POSSIBLE = ["".join(seq) for seq in itertools.product("01", repeat=13)]
-L2_POSSIBLE = ["".join(seq) for seq in itertools.product("01", repeat=15)]
-L3_POSSIBLE = ["".join(seq) for seq in itertools.product("01", repeat=17)]
-
 # representing connection polynomials
 L1_POLYNOMIAL = [1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1]
 L2_POLYNOMIAL = [1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0]
@@ -17,7 +12,7 @@ L3_POLYNOMIAL = [1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0]
 # helper method to calculate hamming distance between two strings
 def calc_hamming(string_one, string_two):
     assert len(string_one) == len(string_two)
-    return sum(s1 != s2 for s1, s2 in zip(string_one, string_two))
+    return float(sum(s1 != s2 for s1, s2 in zip(string_one, string_two)))
 
 # C1(D) = 1 + D1 + D2 + D4 + D6 + D7 + D10 + D11 + D13
 # C2(D)= 1 + D2 + D4 + D6 + D7 + D10 + D11 + D13 + D15
@@ -49,17 +44,36 @@ def calc_sequence(seq, connection):
     # print len(testset)==len(keystream_sequence)
     return output
 
-def attack_keystream(cd):
-    L1 = {}
-    L2 = {}
-    L3 = {}
+def attack_keystream(n, cd):
+    possible = ["".join(seq) for seq in itertools.product("01", repeat=n)]
+    initial = []
+    p = []
 
     # go through each possible sequence
-    for sequence in L1_POSSIBLE:
+    for sequence in possible:
         output_seq = calc_sequence(map(int, list(sequence)), cd)
+        # print calc_hamming(output_seq, keystream_sequence)/len(output_seq)
 
+        correlation = abs(0.5 - (calc_hamming(output_seq, keystream_sequence)/len(output_seq)))
 
-attack_keystream(L1_POLYNOMIAL)
+        initial.append(sequence)
+        p.append(correlation)
+
+    return initial, p
+
+key = []
+
+L1, L1_P = attack_keystream(13, L1_POLYNOMIAL)
+L2, L2_P = attack_keystream(15, L2_POLYNOMIAL)
+L3, L3_P = attack_keystream(17, L3_POLYNOMIAL)
+
+key.append(L1[L1_P.index(max(L1_P))])
+key.append(L2[L2_P.index(max(L2_P))])
+key.append(L3[L3_P.index(max(L3_P))])
+
+print key
+# output ['0000000101010', '011011011111010', '11011100011111111']
+# need to test correctness
 
 # tmp = max(L1_RESULTS, key=L1_RESULTS.get)
 # print tmp
