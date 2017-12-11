@@ -1,8 +1,8 @@
 import itertools
 
 # assuming lfsr that pushes from the left side
-# keystream_sequence = 1010011010111100010001011110111001011011010011000011000110111100110001011011001001101011000010101100000000110010000111101101101101110001101111010001101001101101001001111111001101000010001100000
-keystream_sequence = 0001100100010100011110101101111010110000110011011011110101111001010011010101010100001000010111011011101000010000100110100000110111110110001001010011001010001000011010110010100011100011010001000
+keystream_sequence = '1010011010111100010001011110111001011011010011000011000110111100110001011011001001101011000010101100000000110010000111101101101101110001101111010001101001101101001001111111001101000010001100000'
+# keystream_sequence = '0001100100010100011110101101111010110000110011011011110101111001010011010101010100001000010111011011101000010000100110100000110111110110001001010011001010001000011010110010100011100011010001000'
 
 # representing connection polynomials
 L1_POLYNOMIAL = [1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1]
@@ -29,6 +29,7 @@ keystream_sequence = int_to_list(keystream_sequence)
 # runs through LFSR depending on connection polynomial, returns string containing all added digits
 def calc_sequence(seq, connection):
     reg = seq
+    #print(reg)
     output = []
     # print seq
     # testset = set()
@@ -52,23 +53,26 @@ def calc_sequence(seq, connection):
     # print
     # print len(testset)==len(keystream_sequence)
     return output
-
+# def list_to_string(l):
+# 	for i in l:
+# 		print(str(i), end="")
+# 	print("\n")
 def attack_keystream(n, cd):
     possible = ["".join(seq) for seq in itertools.product("01", repeat=n)]
     for p in possible:
         p = int(p, 2)
 
-    initial = []
-    p = []
-
+    initial = [0]
+    p = [0]
     # go through each possible sequence
     for sequence in possible:
         output_seq = calc_sequence(int_to_list(sequence), cd)
-
-        correlation = abs(0.5 - (calc_hamming(output_seq, keystream_sequence)/len(output_seq)))
-
-        initial.append(sequence)
-        p.append(correlation)
+        i = calc_hamming(output_seq, keystream_sequence)
+        # print(i)
+        correlation = 1 - (calc_hamming(output_seq, keystream_sequence)/len(output_seq))
+        if (correlation > max(p)):
+        	initial.append(sequence)
+        	p.append(correlation)
 
     return initial, p
 
@@ -80,12 +84,32 @@ L3, L3_P = attack_keystream(17, L3_POLYNOMIAL)
 
 # print L1_P
 # print L1[L1_P.index(max(L1_P))]
-
 key.append(L1[L1_P.index(max(L1_P))])
 key.append(L2[L2_P.index(max(L2_P))])
 key.append(L3[L3_P.index(max(L3_P))])
 
-print key
+print (key)
+
+# key = ['0000000101010', '011011011111010', '11011100011111111']
+
+
+def check_keysequence(key):
+	seq13 = calc_sequence(int_to_list(key[0]),L1_POLYNOMIAL)
+	seq15 = calc_sequence(int_to_list(key[1]),L2_POLYNOMIAL)
+	seq17 = calc_sequence(int_to_list(key[2]),L3_POLYNOMIAL)
+	for idx in range(len(keystream_sequence)):
+		checkVal = seq13[idx]+seq15[idx]+seq17[idx]
+		if (checkVal < 2):
+			print("0",end="")
+		else:
+			print("1",end="")
+	print()	
+print("check keysequence")
+check_keysequence(key)
+
+# print("test calc_sequence")
+# print(calc_sequence([1,0,0,0],[1,0,0,1]))
+
 # output ['0000000101010', '011011011111010', '11011100011111111']
 # need to test correctness
 
